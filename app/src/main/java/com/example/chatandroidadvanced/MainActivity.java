@@ -1,5 +1,6 @@
 package com.example.chatandroidadvanced;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!missedInput){
-            //todo create the user on server if all required inputs are valid start activity to show chats
+            //todo create the user on server if all required inputs are valid start activity give parameters with putextra that in conversionactivity all
+            //conversations of the user can be loaded
             Toast.makeText(getApplicationContext() ,"firstName: " + firstName + " lastName: " + lastName + " email: " + eMail, Toast.LENGTH_LONG).show();
+            //nicht sicher ob man andere screens mit intents aufruft bei mvvm
+            Intent intentConversations = new Intent(this, ConversationActivity.class);
+            startActivity(intentConversations);
+            finish();
         } else {
             //todo inform user that something went wrong and he has to retry
             Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();

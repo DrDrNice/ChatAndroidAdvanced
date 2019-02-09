@@ -9,4 +9,11 @@
     <string name="e_mail">E-Mail</string>
     <string name="create_user">Create User</string>
     <string name="cancel_create_user">Cancel</string>
+
+    <!--Conversion screen-->
+    <string name="conversation_header">Conversations</string>
+    <string name="conversation_image">Conversation Image</string>
+    <string name="conversation_partner">Conversation Partner</string>
+    <string name="conversation_message">Conversation Message</string>
+    <string name="conversation_time">00:00</string>
 </resources>
