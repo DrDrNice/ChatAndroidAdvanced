@@ -9,26 +9,26 @@
     tools:context=".ConversationActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbarConversations"
+        android:id="@+id/toolbarNewConversation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimaryDark"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="@string/conversation_header"
+        app:title="@string/new_conversation_header"
         app:titleTextColor="#fff"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvConversations"
+        android:id="@+id/rcvContacts"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarConversations" >
+        app:layout_constraintTop_toBottomOf="@+id/toolbarNewConversation" >
 
     </android.support.v7.widget.RecyclerView>
 
