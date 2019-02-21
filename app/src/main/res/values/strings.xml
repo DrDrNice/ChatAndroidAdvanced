@@ -10,10 +10,22 @@
     <string name="create_user">Create User</string>
     <string name="cancel_create_user">Cancel</string>
 
-    <!--Conversion screen-->
+    <!--Conversation screen-->
     <string name="conversation_header">Conversations</string>
     <string name="conversation_image">Conversation Image</string>
     <string name="conversation_partner">Conversation Partner</string>
     <string name="conversation_message">Conversation Message</string>
     <string name="conversation_time">00:00</string>
+
+    <!--New conversation screen-->
+    <string name="new_conversation_header">New Conversation</string>
+    <string name="cancel_add_conversation">Cancel</string>
+    <string name="add_conversation">Add</string>
+
+    <!--Chat screen-->
+    <string name="chat_header">Chat</string>
+    <string name="back_to_conversations">Back</string>
+    <string name="chat_input_text">Enter text...</string>
+    <string name="chat_send_button">Send</string>
+
 </resources>
