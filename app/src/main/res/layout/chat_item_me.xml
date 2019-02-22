@@ -9,7 +9,7 @@
     android:layout_marginBottom="8dp"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".view.MainActivity">
 
     <TextView
         android:id="@+id/message"
