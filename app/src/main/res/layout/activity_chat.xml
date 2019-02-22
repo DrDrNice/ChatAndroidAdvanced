@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ChatActivity">
+    tools:context=".view.ChatActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarChat"
@@ -35,7 +35,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
         android:elevation="8dp"
         android:orientation="horizontal"
         android:padding="16dp">
@@ -48,8 +47,8 @@
             android:hint="@string/chat_input_text"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black"
-            android:textColorLink="@android:color/black"/>
-            <!--android:theme="@style/AppTheme.Input"-->
+            android:textColorLink="@android:color/black" />
+        <!--android:theme="@style/AppTheme.Input"-->
 
         <Button
             android:id="@+id/input_action"
@@ -59,9 +58,9 @@
             android:layout_gravity="bottom"
             android:layout_marginLeft="16dp"
             android:maxLines="5"
-            android:text="@string/chat_send_button"
-            android:onClick="sendText"/>
-            <!--android:theme="@style/AppTheme.Input"-->
+            android:onClick="sendText"
+            android:text="@string/chat_send_button" />
+        <!--android:theme="@style/AppTheme.Input"-->
 
 
     </LinearLayout>
