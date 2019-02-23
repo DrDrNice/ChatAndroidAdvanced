@@ -1,6 +1,11 @@
 package com.example.chatandroidadvanced.model;
 
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
 
 import java.io.Serializable;
 
@@ -13,24 +18,16 @@ public class Conversation implements Serializable {
     private String status;
     private String content;
     private String time;
+    private String email;
 
-    public Conversation(String id, String firstName, String lastName, String content, String time){
-        this.image = downLoadImage();
+    public Conversation(String id, String firstName, String lastName, String email, String content, String time){
+        this.email = email;
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = "I am using ChatApp!";
         this.content = content;
         this.time = time;
-    }
-
-    private ImageView downLoadImage() {
-        //todo use glide to download an image
-        return null;
-    }
-
-    public ImageView getImage() {
-        return image;
     }
 
     public String getId() {

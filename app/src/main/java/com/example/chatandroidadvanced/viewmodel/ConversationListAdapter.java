@@ -36,9 +36,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
     @Override
     public void onBindViewHolder(@NonNull ConversationListAdapter.ConversationViewHolder holder, int position) {
-        //todo set image for conversation
-        //ImageView image = contactList.get(position).getImage();
-        //holder.conversationImage.setImageResource(image);
 
         String firstName = conversationList.get(position).getFirstName();
         String lastName = conversationList.get(position).getLastName();

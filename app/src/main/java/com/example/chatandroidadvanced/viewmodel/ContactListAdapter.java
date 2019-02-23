@@ -3,6 +3,7 @@ package com.example.chatandroidadvanced.viewmodel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,9 +37,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ContactListAdapter.ContactViewHolder holder, int position) {
-        //todo set image for conversation
-        //ImageView image = contactList.get(position).getImage();
-        //holder.conversationImage.setImageResource(image);
 
         String firstName = contactList.get(position).getFirstName();
         String lastName = contactList.get(position).getLastName();
