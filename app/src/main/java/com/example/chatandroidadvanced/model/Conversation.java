@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class Conversation implements Serializable {
 
-    private ImageView image;
+    private String imageUrl;
     private String id;
     private String firstName;
     private String lastName;
@@ -20,7 +20,8 @@ public class Conversation implements Serializable {
     private String time;
     private String email;
 
-    public Conversation(String id, String firstName, String lastName, String email, String content, String time){
+    public Conversation(String id, String firstName, String lastName, String email, String content, String time, String imageUrl){
+        this.imageUrl = imageUrl;
         this.email = email;
         this.id = id;
         this.firstName = firstName;
@@ -41,6 +42,8 @@ public class Conversation implements Serializable {
     public String getStatus() {
         return status;
     }
+
+    public String getImageUrl () {return imageUrl;}
 
     public void setStatus(String status) {
         this.status = status;

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
+import com.example.chatandroidadvanced.model.GlideApp;
 import com.example.chatandroidadvanced.view.ChatActivity;
 
 import java.util.LinkedList;
@@ -22,9 +23,11 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     private LayoutInflater inflater;
     private final LinkedList<Conversation> contactList;
+    private Context mContext;
 
     public ContactListAdapter(Context context, LinkedList<Conversation> contactList){
         inflater = LayoutInflater.from(context);
+        mContext=context;
         this.contactList = contactList;
     }
 
@@ -46,6 +49,15 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         holder.conversationStatus.setText(status);
 
         holder.conversationTime.setText("");
+
+        String image = contactList.get(position).getImageUrl();
+
+        GlideApp.with(mContext)
+                .load(image)
+                .placeholder(R.drawable.ic_loading_image)
+                .error(R.drawable.ic_loading_error)
+                .into(holder.conversationImage);
+
     }
 
     @Override

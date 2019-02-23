@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
+import com.example.chatandroidadvanced.model.GlideApp;
 import com.example.chatandroidadvanced.view.ChatActivity;
 
 import java.util.LinkedList;
@@ -21,9 +22,11 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
     private LayoutInflater inflater;
     private final LinkedList<Conversation> conversationList;
+    private Context mContext;
 
-    public ConversationListAdapter(Context context, LinkedList<Conversation> conversationList){
+    public ConversationListAdapter(Context context, LinkedList<Conversation> conversationList) {
         inflater = LayoutInflater.from(context);
+        mContext = context;
         this.conversationList = conversationList;
     }
 
@@ -46,6 +49,17 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
         String time = conversationList.get(position).getTime();
         holder.conversationTime.setText(time);
+
+
+        String image = conversationList.get(position).getImageUrl();
+
+        GlideApp.with(mContext)
+                .load(image)
+                .placeholder(R.drawable.ic_loading_image)
+                .error(R.drawable.ic_loading_error)
+                .into(holder.conversationImage);
+
+
     }
 
     @Override
@@ -53,7 +67,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         return conversationList.size();
     }
 
-    class ConversationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ConversationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public final ImageView conversationImage;
         public final TextView conversationPartner;
@@ -84,7 +98,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
             intentChat.putExtra("contact", conversationList.get(position));
             context.startActivity(intentChat);
             adapter.notifyDataSetChanged();
-            ((Activity)context).finish();
+            ((Activity) context).finish();
         }
     }
 }
