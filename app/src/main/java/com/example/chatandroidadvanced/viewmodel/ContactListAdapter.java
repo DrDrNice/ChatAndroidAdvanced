@@ -50,7 +50,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
         holder.conversationTime.setText("");
 
-        String image = contactList.get(position).getImageUrl();
+        String image = contactList.get(position).getImageUrl() + firstName + lastName;
 
         GlideApp.with(mContext)
                 .load(image)

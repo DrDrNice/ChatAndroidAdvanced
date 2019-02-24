@@ -51,7 +51,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         holder.conversationTime.setText(time);
 
 
-        String image = conversationList.get(position).getImageUrl();
+        String image = conversationList.get(position).getImageUrl() + firstName + lastName;
 
         GlideApp.with(mContext)
                 .load(image)
