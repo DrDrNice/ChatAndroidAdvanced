@@ -21,12 +21,12 @@ import java.util.LinkedList;
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ConversationViewHolder> {
 
     private LayoutInflater inflater;
-    private final LinkedList<Conversation> conversationList;
-    private Context mContext;
+    private LinkedList<Conversation> conversationList;
+    private Context context;
 
     public ConversationListAdapter(Context context, LinkedList<Conversation> conversationList) {
         inflater = LayoutInflater.from(context);
-        mContext = context;
+        this.context = context;
         this.conversationList = conversationList;
     }
 
@@ -40,7 +40,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     @Override
     public void onBindViewHolder(@NonNull ConversationListAdapter.ConversationViewHolder holder, int position) {
 
-        String firstName = conversationList.get(position).getFirstName();
+        //todo get firstname lastname and content
+        /*String firstName = conversationList.get(position).getFirstName();
         String lastName = conversationList.get(position).getLastName();
         holder.conversationPartner.setText(firstName + " " + lastName);
 
@@ -51,9 +52,18 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         holder.conversationTime.setText(time);
 
 
-        String image = conversationList.get(position).getImageUrl() + firstName + lastName;
+        String image = conversationList.get(position).getCreatedBy() + firstName + lastName;*/
 
-        GlideApp.with(mContext)
+        //todo delete only testing
+        holder.conversationPartner.setText(conversationList.get(position).getCreatedBy());
+        String content = conversationList.get(position).getTopic();
+        holder.conversationStatus.setText(content);
+        String time = conversationList.get(position).getCreatedDate();
+        holder.conversationTime.setText(time);
+        String image = conversationList.get(position).getCreatedBy() + conversationList.get(position).getCreatedBy();
+        //todo delete till here
+
+        GlideApp.with(context)
                 .load(image)
                 .placeholder(R.drawable.ic_loading_image)
                 .error(R.drawable.ic_loading_error)

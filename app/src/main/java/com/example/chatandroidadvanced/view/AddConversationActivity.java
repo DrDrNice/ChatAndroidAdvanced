@@ -41,8 +41,8 @@ public class AddConversationActivity extends AppCompatActivity {
         //todo delete this example list
         //only for testing self defined fix list.
         int wordListSize = contactList.size();
-        contactList.addLast(new Conversation("12345","Roman", "Leight", "romanleight@gmx.at", "", "","https://robohash.org/"));
-        contactList.addLast(new Conversation("45678","Ben", "Friedman", "benfriedman@gmx.at", "", "","https://robohash.org/"));
+        contactList.addLast(new Conversation("simon rayn", "simon rayn", "mip mip"));
+        contactList.addLast(new Conversation("julia rayn", "julia rayn", "fasel fasel"));
         recyclerview.getAdapter().notifyItemInserted(wordListSize);
         recyclerview.smoothScrollToPosition(wordListSize);
     }

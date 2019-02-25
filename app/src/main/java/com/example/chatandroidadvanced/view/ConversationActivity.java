@@ -12,16 +12,15 @@ import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
-import com.example.chatandroidadvanced.viewmodel.ContactListAdapter;
 import com.example.chatandroidadvanced.viewmodel.ConversationListAdapter;
 
 import java.util.LinkedList;
 
 public class ConversationActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerview;
+    private RecyclerView recyclerView;
     private ConversationListAdapter conversationListAdapter;
-    private final LinkedList<Conversation> conversationList = new LinkedList<>();
+    private LinkedList<Conversation> conversationList = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +30,10 @@ public class ConversationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbarConversations);
         setSupportActionBar(toolbar);
 
-        recyclerview = findViewById(R.id.rcvConversations);
+        recyclerView = findViewById(R.id.rcvConversations);
         conversationListAdapter = new ConversationListAdapter(this, conversationList);
-        recyclerview.setAdapter(conversationListAdapter);
-        recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(conversationListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //Todo get list of conversations from server with get method should be done everytime this activity is started to get actual list
         //conversationslist = get....;
@@ -42,10 +41,10 @@ public class ConversationActivity extends AppCompatActivity {
         //todo delete this example list
         //only for testing self defined fix list.
         int wordListSize = conversationList.size();
-        conversationList.addLast(new Conversation("12345","Jim", "Rogers", "jimrogers@gmx.com", "Bla bla bla..", "22:42", "https://robohash.org/"));
-        conversationList.addLast(new Conversation("45678","Lula", "Lein", "lulalein@gmx.com","Keine ahnung..", "23:19","https://robohash.org/"));
-        recyclerview.getAdapter().notifyItemInserted(wordListSize);
-        recyclerview.smoothScrollToPosition(wordListSize);
+        conversationList.addLast(new Conversation("jim rogers", "jim rogers", "bla bla bla"));
+        conversationList.addLast(new Conversation("jim sanders", "jim sanders", "keine ahnung"));
+        recyclerView.getAdapter().notifyItemInserted(wordListSize);
+        recyclerView.smoothScrollToPosition(wordListSize);
     }
 
     @Override
