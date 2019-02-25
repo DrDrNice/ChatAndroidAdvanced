@@ -3,7 +3,6 @@ package com.example.chatandroidadvanced.viewmodel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,12 +21,12 @@ import java.util.LinkedList;
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ContactViewHolder> {
 
     private LayoutInflater inflater;
-    private final LinkedList<Conversation> contactList;
-    private Context mContext;
+    private LinkedList<Conversation> contactList;
+    private Context context;
 
     public ContactListAdapter(Context context, LinkedList<Conversation> contactList){
         inflater = LayoutInflater.from(context);
-        mContext=context;
+        this.context =context;
         this.contactList = contactList;
     }
 
@@ -41,18 +40,20 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ContactListAdapter.ContactViewHolder holder, int position) {
 
-        String firstName = contactList.get(position).getFirstName();
-        String lastName = contactList.get(position).getLastName();
-        holder.conversationPartner.setText(firstName + " " + lastName);
+        //todo get first an last name from conversation partner
+        //String firstName = contactList.get(position).getFirstName();
+        //String lastName = contactList.get(position).getLastName();
+        //holder.conversationPartner.setText(firstName + " " + lastName);
+        holder.conversationPartner.setText(contactList.get(position).getCreatedBy());
 
-        String status = contactList.get(position).getStatus();
+        String status = contactList.get(position).getTopic(); //contactList.get(position).getStatus();
         holder.conversationStatus.setText(status);
 
         holder.conversationTime.setText("");
 
-        String image = contactList.get(position).getImageUrl() + firstName + lastName;
+        String image = contactList.get(position).getCreatedBy() + "conversation partner";
 
-        GlideApp.with(mContext)
+        GlideApp.with(context)
                 .load(image)
                 .placeholder(R.drawable.ic_loading_image)
                 .error(R.drawable.ic_loading_error)

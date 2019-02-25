@@ -15,7 +15,7 @@
         android:background="?attr/colorPrimaryDark"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="@string/conversation_header"
+        app:title="@string/chat_header"
         app:titleTextColor="#fff"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
         <!--android:theme="@style/AppTheme.Input"-->
 
         <Button
-            android:id="@+id/input_action"
+            android:id="@+id/btn_send_msg"
             style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

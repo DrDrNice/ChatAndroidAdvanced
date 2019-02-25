@@ -1,83 +1,57 @@
 package com.example.chatandroidadvanced.model;
 
-import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.RequestManager;
-
 import java.io.Serializable;
 
 public class Conversation implements Serializable {
 
-    private String imageUrl;
+    private String createdBy;
+    private String createdDate;
     private String id;
-    private String firstName;
-    private String lastName;
-    private String status;
-    private String content;
-    private String time;
-    private String email;
+    private String lastModifiedBy;
+    private String lastModifiedDate;
+    private String topic;
 
-    public Conversation(String id, String firstName, String lastName, String email, String content, String time, String imageUrl){
-        this.imageUrl = imageUrl;
-        this.email = email;
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.status = "I am using ChatApp!";
-        this.content = content;
-        this.time = time;
+    public Conversation(String createdBy, String lastModifiedBy, String topic) {
+        this.createdBy = createdBy;
+        this.lastModifiedBy = lastModifiedBy;
+        this.topic = topic;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
     }
 
-    public String getStatus() {
-        return status;
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public String getImageUrl () {return imageUrl;}
-
-    public void setStatus(String status) {
-        this.status = status;
+    public String getTopic() {
+        return topic;
     }
 
-    public String getContent() {
-        return content;
-    }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }
