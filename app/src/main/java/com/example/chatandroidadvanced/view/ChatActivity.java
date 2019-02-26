@@ -38,11 +38,13 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //todo get clicked contact from contactlistadapter and set it as toolbar header
-        conversation = (Conversation)getIntent().getSerializableExtra("contact");
-        //String firstName = conversation.getFirstName();
-        //String lastName = conversation.getLastName();
-        //toolbar.setTitle(firstName + " " + lastName);
-        toolbar.setTitle(conversation.getCreatedBy());
+        if(getIntent().getExtras() != null) {
+            conversation = (Conversation) getIntent().getSerializableExtra("contact");
+            //String firstName = conversation.getFirstName();
+            //String lastName = conversation.getLastName();
+            //toolbar.setTitle(firstName + " " + lastName);
+            toolbar.setTitle(conversation.getCreatedBy());
+        }
 
         inputText = (EditText)findViewById(R.id.chatInputText);
 

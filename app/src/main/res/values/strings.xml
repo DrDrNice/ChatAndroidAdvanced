@@ -28,4 +28,12 @@
     <string name="chat_input_text">Enter text...</string>
     <string name="chat_send_button">Send</string>
 
+
+    <!--CretePArticipant-->
+    <string name="hint_email">Email...</string>
+    <string name="hint_firstName">First Name...</string>
+    <string name="hint_lastName">Last Name...</string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_saved">Word not saved because it is empty.</string>
+
 </resources>
