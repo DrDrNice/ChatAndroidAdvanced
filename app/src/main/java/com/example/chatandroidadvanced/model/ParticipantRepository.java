@@ -76,7 +76,6 @@ public class ParticipantRepository {
             mAsyncTaskDao = dao;
         }
 
-
         @Override
         protected Void doInBackground(Participant... participants) {
             mAsyncTaskDao.deleteParticipant(participants[0]);
