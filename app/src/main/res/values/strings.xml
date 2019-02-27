@@ -7,7 +7,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="e_mail">E-Mail</string>
-    <string name="create_user">Create User</string>
+    <string name="create_user">Login</string>
     <string name="cancel_create_user">Cancel</string>
 
     <!--Conversation screen-->

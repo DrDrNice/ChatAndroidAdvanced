@@ -1,23 +1,15 @@
 package com.example.chatandroidadvanced.viewmodel;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chatandroidadvanced.R;
-import com.example.chatandroidadvanced.model.Conversation;
-import com.example.chatandroidadvanced.model.GlideApp;
 import com.example.chatandroidadvanced.model.Participant;
-import com.example.chatandroidadvanced.view.ChatActivity;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantListAdapter.ParticipantViewHolder> {
@@ -45,15 +37,15 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             Participant current = mParticipants.get(position);
 
             //Alle LAst und email auch
-            holder.conversationfirstName.setText(current.getfirstName());
-            holder.conversationlastName.setText(current.getlastName());
             holder.conversationEmail.setText(current.getmEmail());
+            holder.conversationTime.setText("");
+            holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
         } else {
             // Covers the case of data not being ready yet.
           //  holder.wordItemView.setText("No Word");
-            holder.conversationfirstName.setText("NoWord");
-            holder.conversationlastName.setText("Nope");
-            holder.conversationEmail.setText("NopeEmail");
+            holder.conversationEmail.setText("NoEmail");
+            holder.conversationTime.setText("");
+            holder.conversationPartner.setText("NoPartner");
         }
     }
 
@@ -73,16 +65,16 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
 
     class ParticipantViewHolder extends RecyclerView.ViewHolder {
 
+        public final TextView conversationPartner;
         public final TextView conversationEmail;
-        public final TextView conversationfirstName;
-        public final TextView conversationlastName;
+        public final TextView conversationTime;
 
         private ParticipantViewHolder(View itemView) {
             super(itemView);
 
-            conversationEmail= itemView.findViewById(R.id.conversationPartner);
-            conversationfirstName = itemView.findViewById(R.id.conversationMessage);
-            conversationlastName = itemView.findViewById(R.id.conversationTime);
+            conversationPartner = itemView.findViewById(R.id.conversationPartner);
+            conversationEmail = itemView.findViewById(R.id.conversationMessage);
+            conversationTime = itemView.findViewById(R.id.conversationTime);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,15 +1,22 @@
 package com.example.chatandroidadvanced.view;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
+import com.example.chatandroidadvanced.model.Participant;
+import com.example.chatandroidadvanced.viewmodel.ParticipantViewModel;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     //variable button
     private Button btnCreateUser;
     private Button btnCancelCreateUser;
+
+    private ParticipantViewModel mParticipantViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         //get buttons
         btnCreateUser = findViewById(R.id.btnCreateUser);
         btnCancelCreateUser = findViewById(R.id.btnCancelCreateUser);
+
+        mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
     }
 
     public void createUserClicked(View view) {
@@ -70,22 +81,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!missedInput){
-            //todo create the user on server if all required inputs are valid start activity give parameters with putextra that in conversionactivity all
             //conversations of the user can be loaded
             Toast.makeText(getApplicationContext() ,"firstName: " + firstName + " lastName: " + lastName + " email: " + eMail, Toast.LENGTH_LONG).show();
-            //nicht sicher ob man andere screens mit intents aufruft bei mvvm
+
+            //todo save user in room after login
+            Participant participant = new Participant(eMail, firstName, lastName);
+            mParticipantViewModel.insert(participant);
+
             Intent intentConversations = new Intent(this, ConversationActivity.class);
             startActivity(intentConversations);
             finish();
         } else {
-            //todo inform user that something went wrong and he has to retry
-            Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext() ,"Something went wrong while creating user, please try again.", Toast.LENGTH_LONG).show();
         }
 
     }
 
     public void cancelCreateUserClicked(View view) {
-        //todo do something if button cancel create user is clicked
         Toast.makeText(getApplicationContext() ,"cancel create user clicked", Toast.LENGTH_SHORT).show();
         txtFristname.setText("");
         txtLastname.setText("");

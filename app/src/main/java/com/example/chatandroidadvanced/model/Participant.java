@@ -9,12 +9,24 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "participant_table")
 public class Participant {
 
-public Participant(){
-
-}
-
     @PrimaryKey(autoGenerate = true)
     private int id;
+
+    //todo are they needed??
+    /*@PrimaryKey(autoGenerate = true)
+    private String createdBy;
+
+    @PrimaryKey(autoGenerate = true)
+    private String createdDate;
+
+    @PrimaryKey(autoGenerate = true)
+    private String lastModifiedBy;
+
+    @PrimaryKey(autoGenerate = true)
+    private String lastModifiedDate;
+
+    @PrimaryKey(autoGenerate = true)
+    private String mAvatar;*/
 
     @NonNull
     @ColumnInfo(name = "email")
@@ -27,6 +39,10 @@ public Participant(){
     @NonNull
     @ColumnInfo(name = "lastName")
     public String mlastName;
+
+    public Participant(){
+
+    }
 
     public Participant(@NonNull String email, String firstName, String lastName) {
         this.mEmail = email;
@@ -54,4 +70,25 @@ public Participant(){
     public void setId(int id) {
         this.id = id;
     }
+
+    //todo are they needed
+    /*public String getmAvatar() {
+        return mAvatar;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
+    }*/
 }

@@ -49,10 +49,12 @@ public class AddConversationActivity extends AppCompatActivity {
         mParticipantViewModel.getAllParticipants().observe(this, new Observer<List<Participant>>() {
             @Override
             public void onChanged(@Nullable List<Participant> participants) {
+                //sets the adapter to the recyclerview and keeps all updated
                 adapter.setmParticipants(participants);
             }
         });
 
+        //todo glaub das participants nur bei login erstellt werden und in room gespeichert und danach in conversation nur die angezeigt werden die eingeloggt wurden
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +124,7 @@ public class AddConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //todo glaube das participants nur bei login erstellt werden
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
