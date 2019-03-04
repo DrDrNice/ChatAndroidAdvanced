@@ -35,6 +35,7 @@ import retrofit2.Response;
 
 public class AddConversationActivity extends AppCompatActivity {
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
+    public static final String NEW_SELECTED_PARTICIPANT = "newSelectedParticipant";
 
     private ParticipantViewModel mParticipantViewModel;
     private RetrofitInstance retrofitInstance;
@@ -98,20 +99,15 @@ public class AddConversationActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(View v, int position) {
+                //start chat activity and put clicked participant as extra to chatactiviy
                 Participant myParticipent = adapter.getWordAtPosition(position);
-
-            Log.d("fooz", myParticipent.getIDServer());
-                Log.d("fooz", String.valueOf(myParticipent.getId()));
-                Log.d("fooz", myParticipent.getfirstName());
-
-               // mParticipantViewModel.update(new Participant(myParticipent.getId(),"2", "Email@update", "Walter", "Hello"));
-               /* Intent intentChat = new Intent(AddConversationActivity.this, ChatActivity.class);
-               startActivity(intentChat);*/
+                Intent intentChat = new Intent(AddConversationActivity.this, ChatActivity.class);
+                //todo acitvate put extra to get it in next activity
+                //intentChat.putExtra(NEW_SELECTED_PARTICIPANT, myParticipent);
+                startActivity(intentChat);
             }
         });
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

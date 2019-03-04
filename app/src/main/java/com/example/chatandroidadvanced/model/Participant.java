@@ -3,6 +3,7 @@ package com.example.chatandroidadvanced.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
@@ -12,7 +13,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-@Entity(tableName = "participant_table")
+//todo warum geht duplikate vermeiden nur mit firstName -> besser wäre email aber da geht es nicht
+@Entity(tableName = "participant_table", indices = {@Index(value = {"firstName"}, unique = true)})
 public class Participant implements Serializable {
 
 

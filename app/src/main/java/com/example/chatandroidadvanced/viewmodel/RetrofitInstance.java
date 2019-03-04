@@ -3,6 +3,7 @@ package com.example.chatandroidadvanced.viewmodel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.provider.Telephony;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.view.ConversationActivity;
+import com.example.chatandroidadvanced.view.MainActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +22,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class RetrofitInstance {
 
@@ -91,67 +95,62 @@ public class RetrofitInstance {
         return null;
     }*/
 
-    /*public void createParticipant(Participant participant, final Context context){
+    public void createParticipant(Participant participant, final Context context, final boolean createSharedPreference){
         Call<Participant> call = participantService.createParticipant(participant);
         call.enqueue(new Callback<Participant>() {
             @Override
             public void onResponse(Call<Participant> call, Response<Participant> response) {
-                if(!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Log.d("create participant not successfull", String.valueOf(response.code()));
-                    Toast.makeText(context ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if(context != null) {
-                    //Log.d("created participant", response.body().getfirstName());
-                    Toast.makeText(context, "firstName: " + response.body().getfirstName() + " lastName: " + response.body().getlastName() + " email: " + response.body().getEmail(), Toast.LENGTH_LONG).show();
-                    Intent intentConversations = new Intent(context, ConversationActivity.class);
-                    //todo add current participant object
-                    intentConversations.putExtra("currentUser", response.body());
-                    context.startActivity(intentConversations);
-                    ((Activity) context).finish();
+                //save current user data in shared preferences if true
+                if(createSharedPreference) {
+                    SharedPreferences.Editor sharedEditor = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE).edit();
+                    sharedEditor.putString(MainActivity.FIRSTNAME, response.body().mfirstName);
+                    sharedEditor.putString(MainActivity.LASTNAME, response.body().mlastName);
+                    sharedEditor.putString(MainActivity.EMAIL, response.body().mEmail);
+                    sharedEditor.putString(MainActivity.ID, response.body().getIDServer());
+                    sharedEditor.apply();
                 }
             }
 
             @Override
             public void onFailure(Call<Participant> call, Throwable t) {
                 Log.d("create participant not successfull", t.toString());
-                Toast.makeText(context ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
             }
         });
-    }*/
+    }
 
 //-------------------------------------
 
-    /*public void getAllParticipants(final Participant currentUser, List<Participant> contactList, final RecyclerView recyclerview){
+    public void getAllParticipants(final Context context, final ParticipantViewModel mParticipantViewModel){
         Call<List<Participant>> call = participantService.getAllParticipants();
-        call.enqueue(new Callback<List<Participant>>() {
-            @Override
-            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                if(!response.isSuccessful()){
-                    Log.d("get participants not successfull", String.valueOf(response.code()));
-                    return;
-                }
+            call.enqueue(new Callback<List<Participant>>() {
+                @Override
+                public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                    if(!response.isSuccessful()){
+                        Log.d("get participants not successfull", String.valueOf(response.code()));
+                        return;
+                    }
 
-                List<Participant> posts = response.body();
-                //Log.d("get last participant", response.body().get(posts.size()-1).getfirstName() + " " + response.body().get(posts.size()-1).getlastName());
-                for (Participant participant : posts) {
-                    if (!participant.getEmail().equals(currentUser.getEmail()) &&
-                            !participant.getfirstName().equals(currentUser.getfirstName()) && !participant.getlastName().equals(currentUser.getlastName())) {
-                        //Log.d("get participant", participant.getfirstName() + " " + participant.getlastName());
-                        contactList.addLast(participant);
+                    //todo is there a better solution than to add every element from online service each time?
+                    SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
+                    List<Participant> posts = response.body();
+                    for (Participant participant : posts) {
+                        //only insert element in room from db if it is not the current user
+                        if(!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())){
+                            mParticipantViewModel.insert(participant);
+                        }
                     }
                 }
 
-                int wordListSize = contactList.size();
-                recyclerview.getAdapter().notifyItemInserted(wordListSize);
-                recyclerview.smoothScrollToPosition(wordListSize);
-            }
-
-            @Override
-            public void onFailure(Call<List<Participant>> call, Throwable t) {
-                Log.d("get participants failed", t.toString());
-            }
-        });
-    }*/
+                @Override
+                public void onFailure(Call<List<Participant>> call, Throwable t) {
+                    Log.d("get participants failed", t.toString());
+                }
+            });
+    }
 }

@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCancelCreateUser;
 
     private ParticipantViewModel mParticipantViewModel;
+    private SharedPreferences preferences;
 
-    //constant shared preferences
+    //constant for shared preferences
     public static final String MY_PREFERENCES = "UserLoggedIn";
     public static final String LASTNAME = "lastName";
     public static final String FIRSTNAME = "firstName";
@@ -69,13 +70,16 @@ public class MainActivity extends AppCompatActivity {
         mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
 
         //using shared preferences to load logged in user
-        SharedPreferences preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
+        preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
+        
+        //todo delete this test parameters
         //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
         //Log.d("preference name", preferences.getString(LASTNAME, ""));
         //Log.d("preference name", preferences.getString(ID, ""));
 
         //todo delete shared preferences if new user should be logged in
-     //   preferences.edit().clear().apply();
+
+        //preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
         if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
@@ -84,14 +88,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intentConversations);
             finish();
         }
-
     }
 
     public void createUserClicked(View view) {
         Participant participant = getUserInput();
         if(participant != null) {
-            //todo um methode user erstellung auslagern zu können bräuchte man ein callback damit man danach room und intent ausführen kann aber wie??
+            //todo works in externally class but to much on main thread
             //create new participant on server
+            //RetrofitInstance retrofitInstance = new RetrofitInstance();
+            //retrofitInstance.createParticipant(participant, getApplicationContext(), true);
+
+            //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
+            /*if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
+                //start conversation activity
+                Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
+                startActivity(intentConversations);
+                finish();
+            }*/
+
             RetrofitInstance retrofitInstance = new RetrofitInstance();
             ParticipantService participantService = retrofitInstance.getParticipantService();
             Call<Participant> call = participantService.createParticipant(participant);
@@ -103,23 +117,13 @@ public class MainActivity extends AppCompatActivity {
                         //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    //save data in shared preferences
+                    //save current user data in shared preferences
                     SharedPreferences.Editor sharedEditor = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE).edit();
                     sharedEditor.putString(FIRSTNAME, response.body().mfirstName);
                     sharedEditor.putString(LASTNAME, response.body().mlastName);
                     sharedEditor.putString(EMAIL, response.body().mEmail);
                     sharedEditor.putString(ID, response.body().getIDServer());
                     sharedEditor.apply();
-
-                    //save user in room
-                    Participant participantRoom =
-                            new Participant(response.body().getIDServer(), response.body().getEmail(), response.body().getfirstName(), response.body().getlastName(),
-                                    response.body().getCreatedDate(), response.body().getCreatedBy(), response.body().getLastModifiedDate(), response.body().getLastModifiedBy(), response.body().getmAvatar());
-                    Log.d("created participant info store in room", response.body().getCreatedBy() + " " + response.body().getCreatedDate());
-
-                    mParticipantViewModel.insert(participantRoom);
-                    Log.d("created participant", response.body().getIDServer() + " " + response.body().getlastName());
-                    Toast.makeText(getApplicationContext(), "firstName: " + response.body().getfirstName() + " lastName: " + response.body().getlastName() + " email: " + response.body().getEmail(), Toast.LENGTH_LONG).show();
 
                     //start conversation activity
                     Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
