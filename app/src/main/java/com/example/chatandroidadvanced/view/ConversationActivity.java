@@ -41,8 +41,8 @@ public class ConversationActivity extends AppCompatActivity {
         //todo delete this example list
         //only for testing self defined fix list.
         int wordListSize = conversationList.size();
-        conversationList.addLast(new Conversation("jim rogers", "jim rogers", "bla bla bla"));
-        conversationList.addLast(new Conversation("jim sanders", "jim sanders", "keine ahnung"));
+       /* conversationList.addLast(new Conversation("jim rogers", "jim rogers", "bla bla bla", "3"));
+        conversationList.addLast(new Conversation("jim sanders", "jim sanders", "keine ahnung", "3"));*/
         recyclerView.getAdapter().notifyItemInserted(wordListSize);
         recyclerView.smoothScrollToPosition(wordListSize);
     }
