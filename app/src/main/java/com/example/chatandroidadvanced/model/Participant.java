@@ -3,6 +3,7 @@ package com.example.chatandroidadvanced.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -15,27 +16,33 @@ import java.io.Serializable;
 public class Participant implements Serializable {
 
 
+    //todo fields createdBy, avatar usw können nicht initialisiert werden bzw ohne @ignore funktioniert es nicht
+
     @SerializedName("idRoom")
     @Expose
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "roomID")
     private int id;
 
-    //todo are they needed??
-    /*@PrimaryKey(autoGenerate = true)
+    @Ignore
+    @ColumnInfo(name = "createdBy")
     private String createdBy;
 
-    @PrimaryKey(autoGenerate = true)
+    @Ignore
+    @ColumnInfo(name = "createdDate")
     private String createdDate;
 
-    @PrimaryKey(autoGenerate = true)
+    @Ignore
+    @ColumnInfo(name = "lastModifiedBy")
     private String lastModifiedBy;
 
-    @PrimaryKey(autoGenerate = true)
+    @Ignore
+    @ColumnInfo(name = "lastModifiedDate")
     private String lastModifiedDate;
 
-    @PrimaryKey(autoGenerate = true)
-    private String mAvatar;*/
+    @Ignore
+    @ColumnInfo(name = "avatar")
+    private String mAvatar;
 
     @SerializedName("id")
     @Expose
@@ -70,26 +77,29 @@ public class Participant implements Serializable {
         this.mEmail = email;
         this.mfirstName = firstName;
         this.mlastName = lastName;
+        this.createdDate = null;
     }
 
-    @Ignore
     public Participant(@NonNull String email, @NonNull String firstName, @NonNull String lastName) {
         this.mEmail = email;
         this.mfirstName = firstName;
         this.mlastName = lastName;
     }
 
-    @Ignore
-    public Participant(int idRoom ,@NonNull String id,@NonNull String email, @NonNull String firstName, @NonNull String lastName) {
-        this.id = idRoom;
+    public Participant(@NonNull String id,@NonNull String email, @NonNull String firstName, @NonNull String lastName,
+                       @NonNull String createdDate,@NonNull String createdBy, @NonNull String lastModifiedDate, @NonNull String lastModifiedBy, @NonNull String avatar) {
         this.mID = id;
         this.mEmail = email;
         this.mfirstName = firstName;
         this.mlastName = lastName;
+        this.createdDate = createdDate;
+        this.createdBy = createdBy;
+        this.lastModifiedDate = lastModifiedDate;
+        this.lastModifiedBy = lastModifiedBy;
+        this.mAvatar = avatar;
     }
 
-
-    public String getmEmail() {
+    public String getEmail() {
         return this.mEmail;
     }
 
@@ -113,24 +123,19 @@ public class Participant implements Serializable {
         this.id = id;
     }
 
-    //todo are they needed
-    /*public String getmAvatar() {
+    public String getmAvatar() {
         return mAvatar;
     }
-
     public String getCreatedBy() {
         return createdBy;
     }
-
     public String getCreatedDate() {
         return createdDate;
     }
-
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
-
     public String getLastModifiedDate() {
         return lastModifiedDate;
-    }*/
+    }
 }

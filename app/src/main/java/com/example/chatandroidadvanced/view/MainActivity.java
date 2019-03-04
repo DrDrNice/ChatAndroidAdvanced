@@ -1,8 +1,8 @@
 package com.example.chatandroidadvanced.view;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +14,13 @@ import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Participant;
+import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.viewmodel.ParticipantViewModel;
+import com.example.chatandroidadvanced.viewmodel.RetrofitInstance;
 
-import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCancelCreateUser;
 
     private ParticipantViewModel mParticipantViewModel;
+
+    //constant shared preferences
+    public static final String MY_PREFERENCES = "UserLoggedIn";
+    public static final String LASTNAME = "lastName";
+    public static final String FIRSTNAME = "firstName";
+    public static final String EMAIL = "email";
+    public static final String ID = "id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,45 +67,96 @@ public class MainActivity extends AppCompatActivity {
         btnCancelCreateUser = findViewById(R.id.btnCancelCreateUser);
 
         mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
+
+        //using shared preferences to load logged in user
+        SharedPreferences preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
+        //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
+        //Log.d("preference name", preferences.getString(LASTNAME, ""));
+        //Log.d("preference name", preferences.getString(ID, ""));
+
+        //todo delete shared preferences if new user should be logged in
+        preferences.edit().clear().apply();
+
+        //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
+        if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
+            //start conversation activity
+            Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
+            startActivity(intentConversations);
+            finish();
+        }
+
     }
 
     public void createUserClicked(View view) {
-        //boolean to check if all inupts are correct
-        boolean missedInput = false;
+        Participant participant = getUserInput();
+        if(participant != null) {
+            //todo um methode user erstellung auslagern zu können bräuchte man ein callback damit man danach room und intent ausführen kann aber wie??
+            //create new participant on server
+            RetrofitInstance retrofitInstance = new RetrofitInstance();
+            ParticipantService participantService = retrofitInstance.getParticipantService();
+            Call<Participant> call = participantService.createParticipant(participant);
+            call.enqueue(new Callback<Participant>() {
+                @Override
+                public void onResponse(Call<Participant> call, Response<Participant> response) {
+                    if (!response.isSuccessful()) {
+                        Log.d("create participant not successfull", String.valueOf(response.code()));
+                        //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    //save data in shared preferences
+                    SharedPreferences.Editor sharedEditor = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE).edit();
+                    sharedEditor.putString(FIRSTNAME, response.body().mfirstName);
+                    sharedEditor.putString(LASTNAME, response.body().mlastName);
+                    sharedEditor.putString(EMAIL, response.body().mEmail);
+                    sharedEditor.putString(ID, response.body().getIDServer());
+                    sharedEditor.apply();
 
+                    //save user in room
+                    Participant participantRoom =
+                            new Participant(response.body().getIDServer(), response.body().getEmail(), response.body().getfirstName(), response.body().getlastName(),
+                                    response.body().getCreatedDate(), response.body().getCreatedBy(), response.body().getLastModifiedDate(), response.body().getLastModifiedBy(), response.body().getmAvatar());
+                    Log.d("created participant info store in room", response.body().getCreatedBy() + " " + response.body().getCreatedDate());
+
+                    mParticipantViewModel.insert(participantRoom);
+                    Log.d("created participant", response.body().getIDServer() + " " + response.body().getlastName());
+                    Toast.makeText(getApplicationContext(), "firstName: " + response.body().getfirstName() + " lastName: " + response.body().getlastName() + " email: " + response.body().getEmail(), Toast.LENGTH_LONG).show();
+
+                    //start conversation activity
+                    Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
+                    startActivity(intentConversations);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<Participant> call, Throwable t) {
+                    Log.d("create participant not successfull", t.toString());
+                    //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //gets the input from the user as participant
+    private Participant getUserInput() {
         //get text from textlabels and store
         String firstName = txtFristname.getText().toString();
         String lastName = txtLastname.getText().toString();
         String eMail = txtEmail.getText().toString();
-
         if(firstName.isEmpty()) {
             Toast.makeText(getApplicationContext() ,"Please enter valid first name!", Toast.LENGTH_LONG).show();
-            missedInput = true;
+            return null;
         }
         if(lastName.isEmpty()) {
             Toast.makeText(getApplicationContext() ,"Please enter valid last name!", Toast.LENGTH_LONG).show();
-            missedInput = true;
+            return null;
         }
         if(eMail.isEmpty()) {
             Toast.makeText(getApplicationContext() ,"Please enter valid e-mail!", Toast.LENGTH_LONG).show();
-            missedInput = true;
+            return null;
         }
-
-        if(!missedInput){
-            //conversations of the user can be loaded
-            Toast.makeText(getApplicationContext() ,"firstName: " + firstName + " lastName: " + lastName + " email: " + eMail, Toast.LENGTH_LONG).show();
-
-            //todo save user in room after login
-          /*  Participant participant = new Participant("1",eMail, firstName, lastName);
-            mParticipantViewModel.insert(participant);*/
-
-            Intent intentConversations = new Intent(this, ConversationActivity.class);
-            startActivity(intentConversations);
-            finish();
-        } else {
-            Toast.makeText(getApplicationContext() ,"Something went wrong while creating user, please try again.", Toast.LENGTH_LONG).show();
-        }
-
+        return new Participant(eMail, firstName, lastName);
     }
 
     public void cancelCreateUserClicked(View view) {
