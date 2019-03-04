@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("preference name", preferences.getString(ID, ""));
 
         //todo delete shared preferences if new user should be logged in
+
         //preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts

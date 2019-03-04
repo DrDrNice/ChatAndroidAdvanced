@@ -1,20 +1,63 @@
 package com.example.chatandroidadvanced.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
+@Entity(tableName = "conversation_table")
 public class Conversation implements Serializable {
 
-    private String createdBy;
-    private String createdDate;
+    @SerializedName("roomId")
+    @Expose
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "roomId")
+    private int roomId;
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
+
+
+    @SerializedName("id")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "Id")
     private String id;
-    private String lastModifiedBy;
-    private String lastModifiedDate;
+
+    @SerializedName("topic")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "topic")
     private String topic;
 
-    public Conversation(String createdBy, String lastModifiedBy, String topic) {
-        this.createdBy = createdBy;
-        this.lastModifiedBy = lastModifiedBy;
+    @Ignore
+    @Expose
+    private String lastModifiedBy;
+
+    @Ignore
+    @Expose
+    private String lastModifiedDate;
+
+    @Ignore
+    @Expose
+    private String createdBy;
+
+    @Ignore
+    @Expose
+    private String createdDate;
+
+
+    public Conversation(String topic, String id) {
         this.topic = topic;
+        this.id = id;
     }
 
     public void setCreatedBy(String createdBy) {
@@ -40,6 +83,22 @@ public class Conversation implements Serializable {
     public String getId() {
         return id;
     }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
+    public void setLastModifiedDate(String lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public int getRoomId(){return roomId;}
+
+    public void setRoomId(){this.roomId = roomId;}
 
     public String getLastModifiedBy() {
         return lastModifiedBy;

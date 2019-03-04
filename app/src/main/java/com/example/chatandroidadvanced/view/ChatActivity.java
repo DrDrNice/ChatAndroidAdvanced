@@ -77,9 +77,9 @@ public class ChatActivity extends AppCompatActivity {
         //messageList.addLast(
         //        new Message(inputText.getText().toString(), conversation.getId(), conversation.getFirstName() + " " + conversation.getLastName(),
         //                conversation.getFirstName() + " " + conversation.getLastName(), /*user.getid*/"1234", "789"));
-        messageList.addLast(
+      /*  messageList.addLast(
                 new Message(inputText.getText().toString(), conversation.getId(), conversation.getCreatedBy(),
-                        conversation.getLastModifiedBy(), /*user.getid*/"1234", "789"));
+                        conversation.getLastModifiedBy(),   /*user.getid*/  /*"1234", "789"));*/
         inputText.setText("");
         messageListAdapter = new MessageListAdapter(this, messageList);
         recyclerView.setAdapter(messageListAdapter);
