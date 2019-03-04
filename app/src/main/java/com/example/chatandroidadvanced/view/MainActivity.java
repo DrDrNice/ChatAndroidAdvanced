@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("preference name", preferences.getString(ID, ""));
 
         //todo delete shared preferences if new user should be logged in
-
         //preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<Participant> call, Response<Participant> response) {
                     if (!response.isSuccessful()) {
                         Log.d("create participant not successfull", String.valueOf(response.code()));
-                        //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                         return;
                     }
                     //save current user data in shared preferences
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<Participant> call, Throwable t) {
                     Log.d("create participant not successfull", t.toString());
-                    //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                 }
             });
         } else {
