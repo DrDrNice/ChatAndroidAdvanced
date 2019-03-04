@@ -12,6 +12,7 @@ import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.view.ConversationActivity;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,7 +31,7 @@ public class RetrofitInstance {
 
     public RetrofitInstance(){
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.210:8080/")
+                .baseUrl("http://10.0.0.16:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -52,8 +53,45 @@ public class RetrofitInstance {
     public ConversationService getConversationService() {
         return conversationService;
     }*/
-/*
-    public void createParticipant(Participant participant, final Context context){
+
+    //delete user from db
+    public void deleteParticipant(Integer participantId){
+        Call<Participant> call = participantService.deleteParticipant(participantId);
+        call.enqueue(new Callback<Participant>() {
+            @Override
+            public void onResponse(Call<Participant> call, Response<Participant> response) {
+                if(!response.isSuccessful()){
+                    Log.d("delete participant not successfull", String.valueOf(response.code()));
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Participant> call, Throwable t) {
+                Log.d("delete participant not successfull", t.toString());
+            }
+        });
+    }
+
+    /*public Participant createParticipantSynchron(Participant participant){
+        Call<Participant> call = participantService.createParticipant(participant);
+
+        try {
+            Response<Participant> response = call.execute();
+            if(response.isSuccessful()){
+                Log.d("create participant synchron success", response.body().getfirstName());
+                return response.body();
+            } else {
+                Log.d("create participant synchron no success", "");
+            }
+        } catch (IOException e) {
+            Log.d("create participant synchron no success", "");
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+    /*public void createParticipant(Participant participant, final Context context){
         Call<Participant> call = participantService.createParticipant(participant);
         call.enqueue(new Callback<Participant>() {
             @Override

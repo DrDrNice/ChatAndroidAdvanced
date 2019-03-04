@@ -1,6 +1,7 @@
 package com.example.chatandroidadvanced.viewmodel;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.GlideApp;
 import com.example.chatandroidadvanced.model.Participant;
+import com.example.chatandroidadvanced.view.MainActivity;
 
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantListAdapter.ParticipantViewHolder> {
 
@@ -44,21 +48,36 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
 
             Participant current = mParticipants.get(position);
 
-            //Alle LAst und email auch
-            holder.conversationEmail.setText(current.getmEmail());
-            holder.conversationTime.setText("");
-            holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
+            //todo find better solution to not display current user in recyclerview
+            SharedPreferences preferences = mContext.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
+            if(preferences.getString(MainActivity.FIRSTNAME, "").equals(current.getfirstName())
+                   && preferences.getString(MainActivity.LASTNAME, "").equals(current.getlastName())
+                   && preferences.getString(MainActivity.EMAIL, "").equals(current.getEmail())) {
 
-            String image = "https://robohash.org/" + current.getmEmail();
-            //todo delete till here
+                //if it is the actual user it should not be displayed in recycler view
+                holder.conversationEmail.setText("");
+                holder.conversationTime.setText("");
+                holder.conversationPartner.setText("");
 
-            GlideApp.with(mContext)
-                    .load(image)
-                    .placeholder(R.drawable.ic_loading_image)
-                    .error(R.drawable.ic_loading_error)
-                    .into(holder.conversationImage);
+            } else {
 
+                //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
+                //looking if room participant is empty
+                Log.d("Participant info room", current.getCreatedBy() + " " + current.getCreatedDate());
 
+                //Alle LAst und email auch
+                holder.conversationEmail.setText(current.getEmail());
+                holder.conversationTime.setText("");
+                holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
+
+                //todo should image be loaded when user is created??
+                String image = "https://robohash.org/" + current.getEmail();
+                GlideApp.with(mContext)
+                        .load(image)
+                        .placeholder(R.drawable.ic_loading_image)
+                        .error(R.drawable.ic_loading_error)
+                        .into(holder.conversationImage);
+            }
         } else {
             // Covers the case of data not being ready yet.
           //  holder.wordItemView.setText("No Word");
