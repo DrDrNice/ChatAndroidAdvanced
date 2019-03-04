@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext() ,"firstName: " + firstName + " lastName: " + lastName + " email: " + eMail, Toast.LENGTH_LONG).show();
 
             //todo save user in room after login
-            Participant participant = new Participant(eMail, firstName, lastName);
-            mParticipantViewModel.insert(participant);
+          /*  Participant participant = new Participant("1",eMail, firstName, lastName);
+            mParticipantViewModel.insert(participant);*/
 
             Intent intentConversations = new Intent(this, ConversationActivity.class);
             startActivity(intentConversations);

@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 
-@Database(entities = {Participant.class}, version = 1, exportSchema = false)
+@Database(entities = {Participant.class}, version = 2, exportSchema = false)
 public abstract  class ParticipantRoomDatabase extends RoomDatabase {
 
     public abstract ParticipantDao participantDao();
@@ -58,7 +58,7 @@ public abstract  class ParticipantRoomDatabase extends RoomDatabase {
 
             if (mDao.getAnyParticipant().length < 1) {
                 for (int i = 0; i <= email.length - 1; i++) {
-                    Participant participant = new Participant(email[i], firstname[i], lastName[i]);
+                    Participant participant = new Participant("1",email[i], firstname[i], lastName[i]);
                     mDao.insert(participant);
                 }
             }

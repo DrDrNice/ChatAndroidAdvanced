@@ -31,5 +31,5 @@ public interface ParticipantDao {
     LiveData<List<Participant>> getAllParticipants();
 
     @Update
-    void update(Participant... participants);
+    void update(Participant... participant);
 }

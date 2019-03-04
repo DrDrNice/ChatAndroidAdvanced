@@ -26,8 +26,10 @@ public class ParticipantViewModel extends AndroidViewModel {
         mRepository.insert(participant);}
     public void deleteAll(){
         mRepository.deleteAll();}
+
     public void deleteParticipant(Participant participant){
         mRepository.deleteWord(participant);}
+
     public void update(Participant participant) {
         mRepository.update(participant);
     }
