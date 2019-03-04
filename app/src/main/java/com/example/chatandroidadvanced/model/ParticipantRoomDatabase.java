@@ -45,9 +45,9 @@ public abstract  class ParticipantRoomDatabase extends RoomDatabase {
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
         private final ParticipantDao mDao;
-        String[] email = {"email@e", "Croco", "CAT" };
+        /*String[] email = {"email@e", "Croco", "CAT" };
         String[] firstname = {"Peter", "Hans", "Udo" };
-        String[] lastName = {"Stach", "Stiftinger", "Stadler" };
+        String[] lastName = {"Stach", "Stiftinger", "Stadler" };*/
 
         PopulateDbAsync(ParticipantRoomDatabase db) {
             mDao = db.participantDao();
@@ -56,12 +56,12 @@ public abstract  class ParticipantRoomDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (mDao.getAnyParticipant().length < 1) {
+            /*if (mDao.getAnyParticipant().length < 1) {
                 for (int i = 0; i <= email.length - 1; i++) {
                     Participant participant = new Participant("1",email[i], firstname[i], lastName[i]);
                     mDao.insert(participant);
                 }
-            }
+            }*/
             return null;
         }
     }

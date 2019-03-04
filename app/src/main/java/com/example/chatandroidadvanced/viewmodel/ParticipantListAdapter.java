@@ -28,8 +28,8 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
 
     public ParticipantListAdapter(Context context) {
         mContext =context;
-        mInflater = LayoutInflater.from(context); }
-
+        mInflater = LayoutInflater.from(context);
+    }
 
     public  Participant getWordAtPosition(int position){
         return mParticipants.get(position);
@@ -45,39 +45,23 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
     public void onBindViewHolder(ParticipantViewHolder holder, int position) {
         if (mParticipants != null ) {
             //&& Integer.valueOf(mParticipants.get(position).getIDServer())!= 170
-
             Participant current = mParticipants.get(position);
+            //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
+            //looking if room participant is empty
+            Log.d("Participant info room", current.getCreatedBy() + " " + current.getCreatedDate());
 
-            //todo find better solution to not display current user in recyclerview
-            SharedPreferences preferences = mContext.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
-            if(preferences.getString(MainActivity.FIRSTNAME, "").equals(current.getfirstName())
-                   && preferences.getString(MainActivity.LASTNAME, "").equals(current.getlastName())
-                   && preferences.getString(MainActivity.EMAIL, "").equals(current.getEmail())) {
+            //Alle LAst und email auch
+            holder.conversationEmail.setText(current.getEmail());
+            holder.conversationTime.setText("");
+            holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
 
-                //if it is the actual user it should not be displayed in recycler view
-                holder.conversationEmail.setText("");
-                holder.conversationTime.setText("");
-                holder.conversationPartner.setText("");
-
-            } else {
-
-                //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
-                //looking if room participant is empty
-                Log.d("Participant info room", current.getCreatedBy() + " " + current.getCreatedDate());
-
-                //Alle LAst und email auch
-                holder.conversationEmail.setText(current.getEmail());
-                holder.conversationTime.setText("");
-                holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
-
-                //todo should image be loaded when user is created??
-                String image = "https://robohash.org/" + current.getEmail();
-                GlideApp.with(mContext)
-                        .load(image)
-                        .placeholder(R.drawable.ic_loading_image)
-                        .error(R.drawable.ic_loading_error)
-                        .into(holder.conversationImage);
-            }
+            //todo should image be loaded when user is created??
+            String image = "https://robohash.org/" + current.getEmail();
+            GlideApp.with(mContext)
+                    .load(image)
+                    .placeholder(R.drawable.ic_loading_image)
+                    .error(R.drawable.ic_loading_error)
+                    .into(holder.conversationImage);
         } else {
             // Covers the case of data not being ready yet.
           //  holder.wordItemView.setText("No Word");
@@ -102,7 +86,6 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
     }
 
     class ParticipantViewHolder extends RecyclerView.ViewHolder {
-
         public final ImageView conversationImage;
         public final TextView conversationPartner;
         public final TextView conversationEmail;
@@ -110,7 +93,6 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
 
         private ParticipantViewHolder(View itemView) {
             super(itemView);
-
             conversationImage = itemView.findViewById(R.id.conversationImage);
             conversationPartner = itemView.findViewById(R.id.conversationPartner);
             conversationEmail = itemView.findViewById(R.id.conversationMessage);
@@ -124,7 +106,6 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             });
         }
     }
-
 
     public void setOnItemClickListener(ClickListener clickListener) {
         ParticipantListAdapter.clickListener = clickListener;
