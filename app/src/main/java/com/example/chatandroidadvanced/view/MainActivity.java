@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         //using shared preferences to load logged in user
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
+        
         //todo delete this test parameters
         //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
         //Log.d("preference name", preferences.getString(LASTNAME, ""));
