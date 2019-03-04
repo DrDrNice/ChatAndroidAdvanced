@@ -3,6 +3,7 @@ package com.example.chatandroidadvanced.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -11,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-@Entity(tableName = "conversation_table")
+@Entity(tableName = "conversation_table", indices = {@Index(value = {"Id"}, unique = true)})
 public class Conversation implements Serializable {
 
     @SerializedName("roomId")

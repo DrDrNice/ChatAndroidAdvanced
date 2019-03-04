@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 
-@Database(entities = {Conversation.class}, version = 1, exportSchema = false)
+@Database(entities = {Conversation.class}, version = 2, exportSchema = false)
 public abstract class ConversationRoomDatabase extends RoomDatabase {
 
     public abstract ConversationDao conversationDao();
@@ -44,7 +44,7 @@ public abstract class ConversationRoomDatabase extends RoomDatabase {
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
         private final ConversationDao mDao;
-        String[] topic = {"etopic", "CrocoTopic", "CATTopic" };
+      //  String[] topic = {"etopic", "CrocoTopic", "CATTopic" };
 
 
         PopulateDbAsync(ConversationRoomDatabase db) {
@@ -54,12 +54,12 @@ public abstract class ConversationRoomDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (mDao.getAnyConversation().length < 1) {
+         /*   if (mDao.getAnyConversation().length < 1) {
                 for (int i = 0; i <= topic.length - 1; i++) {
                     Conversation conversation = new Conversation(topic[i],"3");
                     mDao.insert(conversation);
                 }
-            }
+            }*/
             return null;
         }
     }

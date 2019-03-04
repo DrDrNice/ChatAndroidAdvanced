@@ -9,6 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.chatandroidadvanced.model.Conversation;
+import com.example.chatandroidadvanced.model.ConversationService;
+import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.view.ConversationActivity;
@@ -29,21 +32,21 @@ public class RetrofitInstance {
 
     private final Retrofit retrofit;
     private final ParticipantService participantService;
+    private final ConversationService mConversationService;
+    private final MessageService mMessageService;
 
    /* private final MessageService messageService;
     private final ConversationService conversationService;*/
 
-    public RetrofitInstance(){
+    public RetrofitInstance() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(" http://10.0.0.16:8080/")
+                .baseUrl("http://192.168.0.210:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         participantService = retrofit.create(ParticipantService.class);
-
-    /*    messageService = retrofit.create(MessageService.class);
-
-        conversationService = retrofit.create(ConversationService.class);*/
+        mConversationService = retrofit.create(ConversationService.class);
+        mMessageService = retrofit.create(MessageService.class);
     }
 
     public ParticipantService getParticipantService() {
@@ -59,12 +62,12 @@ public class RetrofitInstance {
     }*/
 
     //delete user from db
-    public void deleteParticipant(Integer participantId){
+    public void deleteParticipant(Integer participantId) {
         Call<Participant> call = participantService.deleteParticipant(participantId);
         call.enqueue(new Callback<Participant>() {
             @Override
             public void onResponse(Call<Participant> call, Response<Participant> response) {
-                if(!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Log.d("delete participant not successfull", String.valueOf(response.code()));
                     return;
                 }
@@ -95,7 +98,7 @@ public class RetrofitInstance {
         return null;
     }*/
 
-    public void createParticipant(Participant participant, final Context context, final boolean createSharedPreference){
+    public void createParticipant(Participant participant, final Context context, final boolean createSharedPreference) {
         Call<Participant> call = participantService.createParticipant(participant);
         call.enqueue(new Callback<Participant>() {
             @Override
@@ -106,7 +109,7 @@ public class RetrofitInstance {
                 }
 
                 //save current user data in shared preferences if true
-                if(createSharedPreference) {
+                if (createSharedPreference) {
                     SharedPreferences.Editor sharedEditor = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE).edit();
                     sharedEditor.putString(MainActivity.FIRSTNAME, response.body().mfirstName);
                     sharedEditor.putString(MainActivity.LASTNAME, response.body().mlastName);
@@ -126,31 +129,79 @@ public class RetrofitInstance {
 
 //-------------------------------------
 
-    public void getAllParticipants(final Context context, final ParticipantViewModel mParticipantViewModel){
+    public void getAllParticipants(final Context context, final ParticipantViewModel mParticipantViewModel) {
         Call<List<Participant>> call = participantService.getAllParticipants();
-            call.enqueue(new Callback<List<Participant>>() {
-                @Override
-                public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                    if(!response.isSuccessful()){
-                        Log.d("get participants not successfull", String.valueOf(response.code()));
-                        return;
-                    }
-
-                    //todo is there a better solution than to add every element from online service each time?
-                    SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
-                    List<Participant> posts = response.body();
-                    for (Participant participant : posts) {
-                        //only insert element in room from db if it is not the current user
-                        if(!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())){
-                            mParticipantViewModel.insert(participant);
-                        }
-                    }
+        call.enqueue(new Callback<List<Participant>>() {
+            @Override
+            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("get participants not successfull", String.valueOf(response.code()));
+                    return;
                 }
 
-                @Override
-                public void onFailure(Call<List<Participant>> call, Throwable t) {
-                    Log.d("get participants failed", t.toString());
+                //todo is there a better solution than to add every element from online service each time?
+                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
+                List<Participant> posts = response.body();
+                for (Participant participant : posts) {
+                    //only insert element in room from db if it is not the current user
+                    if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
+                        mParticipantViewModel.insert(participant);
+                    }
                 }
-            });
+            }
+
+            @Override
+            public void onFailure(Call<List<Participant>> call, Throwable t) {
+                Log.d("get participants failed", t.toString());
+            }
+        });
     }
+
+    public void getAllConversations(final Context context, final ConversationViewModel mConversationViewModel) {
+        Call<List<Conversation>> call = mConversationService.getAllConversations();
+        call.enqueue(new Callback<List<Conversation>>() {
+            @Override
+            public void onResponse(Call<List<Conversation>> call, Response<List<Conversation>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("get participants not successfull", String.valueOf(response.code()));
+                    return;
+                }
+
+            /*    //todo is there a better solution than to add every element from online service each time?
+                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
+
+                List<Conversation> posts = response.body();
+                for (Conversation conversation : posts) {
+                    //only insert element in room from db if it is not the current user
+                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
+                        mConversationViewModel.insert(conversation);
+                   // }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Conversation>> call, Throwable t) {
+                Log.d("get participants failed", t.toString());
+            }
+        });
+    }
+
+    public void deleteConversation(Integer conversationId) {
+        Call<Conversation> call = mConversationService.deleteConversation(conversationId);
+        call.enqueue(new Callback<Conversation>() {
+            @Override
+            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("delete participant not successfull", String.valueOf(response.code()));
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Conversation> call, Throwable t) {
+                Log.d("delete participant not successfull", t.toString());
+            }
+        });
+    }
+
 }

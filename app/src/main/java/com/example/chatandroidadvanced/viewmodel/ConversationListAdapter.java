@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,33 +15,41 @@ import android.widget.TextView;
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
 import com.example.chatandroidadvanced.model.GlideApp;
+import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.view.ChatActivity;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ConversationViewHolder> {
 
+    private static ClickListener clickListener;
     private LayoutInflater inflater;
-    private LinkedList<Conversation> conversationList;
-    private Context context;
+    //private LinkedList<Conversation> conversationList;
+    private List<Conversation> mConversation;
+    private Context mContext;
 
-    public ConversationListAdapter(Context context, LinkedList<Conversation> conversationList) {
+    public ConversationListAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        this.context = context;
-        this.conversationList = conversationList;
+        this.mContext = context;
+        //  this.conversationList = conversationList;
+    }
+
+    public  Conversation getConversationdAtPosition(int position){
+        return mConversation.get(position);
     }
 
     @NonNull
     @Override
     public ConversationListAdapter.ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = inflater.inflate(R.layout.conversation_item, parent, false);
-        return new ConversationListAdapter.ConversationViewHolder(itemView, this);
+        return new ConversationViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ConversationListAdapter.ConversationViewHolder holder, int position) {
 
-        //todo get firstname lastname and content
+      /*  //todo get firstname lastname and content
         /*String firstName = conversationList.get(position).getFirstName();
         String lastName = conversationList.get(position).getLastName();
         holder.conversationPartner.setText(firstName + " " + lastName);
@@ -51,9 +60,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         String time = conversationList.get(position).getTime();
         holder.conversationTime.setText(time);
 
-
-        String image = conversationList.get(position).getCreatedBy() + firstName + lastName;*/
-
+        String image = conversationList.get(position).getCreatedBy() + firstName + lastName;*/ /*
         //todo delete only testing
         holder.conversationPartner.setText(conversationList.get(position).getCreatedBy());
         String content = conversationList.get(position).getTopic();
@@ -69,46 +76,80 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
                 .error(R.drawable.ic_loading_error)
                 .into(holder.conversationImage);
 
+*/
 
+        if (mConversation != null) {
+
+            Conversation current = mConversation.get(position);
+
+            //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
+            //looking if room participant is empty
+            Log.d("Conversation info room", current.getCreatedBy() + " " + current.getCreatedDate());
+
+            //Alle LAst und email auch
+            holder.conversationEmail.setText(current.getTopic());
+            holder.conversationTime.setText("");
+            holder.conversationPartner.setText("Test");
+
+            //todo should image be loaded when user is created??
+           String image = "https://robohash.org/" ;
+         /*  GlideApp.with(mContext)
+                    .load(image)
+                    .placeholder(R.drawable.ic_loading_image)
+                    .error(R.drawable.ic_loading_error)
+                    .into(holder.conversationImage);*/
+        } else {
+            // Covers the case of data not being ready yet.
+            //  holder.wordItemView.setText("No Word");
+            holder.conversationEmail.setText("NoEmail");
+            holder.conversationTime.setText("");
+            holder.conversationPartner.setText("NoPartner");
+        }
     }
 
     @Override
     public int getItemCount() {
-        return conversationList.size();
+        if (mConversation != null)
+            return mConversation.size();
+        else return 0;
     }
 
-    class ConversationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public void setmParticipants(List<Conversation> conversations) {
+        mConversation = conversations;
+        notifyDataSetChanged();
+    }
+
+    class ConversationViewHolder extends RecyclerView.ViewHolder {
 
         public final ImageView conversationImage;
         public final TextView conversationPartner;
-        public final TextView conversationStatus;
+        public final TextView conversationEmail;
         public final TextView conversationTime;
 
-        final ConversationListAdapter adapter;
-
-        public ConversationViewHolder(@NonNull View itemView, ConversationListAdapter adapter) {
+        private ConversationViewHolder(View itemView) {
             super(itemView);
             conversationImage = itemView.findViewById(R.id.conversationImage);
             conversationPartner = itemView.findViewById(R.id.conversationPartner);
-            conversationStatus = itemView.findViewById(R.id.conversationMessage);
+            conversationEmail = itemView.findViewById(R.id.conversationMessage);
             conversationTime = itemView.findViewById(R.id.conversationTime);
-            this.adapter = adapter;
-            itemView.setOnClickListener(this);
-        }
 
-        @Override
-        public void onClick(View v) {
-            int position = getLayoutPosition();
-            //String element = contactList.get(position).getFirstName();
-            //contactList.get(position).setFirstName("Clicked");
-            //contactList.set(position, "Clicked" + element);
-            //Todo if clicked on contact it should be added to the database to see it in conversations
-            Context context = v.getContext();
-            Intent intentChat = new Intent(context, ChatActivity.class);
-            intentChat.putExtra("contact", conversationList.get(position));
-            context.startActivity(intentChat);
-            adapter.notifyDataSetChanged();
-            ((Activity) context).finish();
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClick(view, getAdapterPosition());
+                }
+            });
+
         }
     }
-}
+            public void setOnItemClickListener (ClickListener clickListener){
+                ConversationListAdapter.clickListener = clickListener;
+            }
+
+            public interface ClickListener {
+                void onItemClick(View v, int position);
+            }
+
+        }
+

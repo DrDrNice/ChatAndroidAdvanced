@@ -44,8 +44,8 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
     @Override
     public void onBindViewHolder(ParticipantViewHolder holder, int position) {
         if (mParticipants != null ) {
-            //&& Integer.valueOf(mParticipants.get(position).getIDServer())!= 170
             Participant current = mParticipants.get(position);
+
             //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
             //looking if room participant is empty
             Log.d("Participant info room", current.getCreatedBy() + " " + current.getCreatedDate());
