@@ -42,7 +42,7 @@ public class ConversationActivity extends AppCompatActivity {
  */
     private ParticipantViewModel mParticipantViewModel;
     private ConversationViewModel mConversationViewModel;
-    private RetrofitInstance retrofitInstance;
+   // private RetrofitInstance retrofitInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

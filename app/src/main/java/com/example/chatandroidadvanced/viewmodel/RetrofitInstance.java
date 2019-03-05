@@ -204,4 +204,12 @@ public class RetrofitInstance {
         });
     }
 
+    public ConversationService getConversationService() {
+        return mConversationService;
+    }
+
+    public MessageService getMessageService() {
+        return mMessageService;
+    }
+
 }

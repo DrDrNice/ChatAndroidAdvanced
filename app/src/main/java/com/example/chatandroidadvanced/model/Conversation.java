@@ -61,6 +61,7 @@ public class Conversation implements Serializable {
         this.id = id;
     }
 
+
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
