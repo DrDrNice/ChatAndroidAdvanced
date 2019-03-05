@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.chatandroidadvanced.model.Conversation;
 import com.example.chatandroidadvanced.model.ConversationService;
+import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
@@ -40,7 +41,7 @@ public class RetrofitInstance {
 
     public RetrofitInstance() {
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.210:8080/")
+                .baseUrl("http://192.168.0.201:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -203,6 +204,67 @@ public class RetrofitInstance {
             }
         });
     }
+
+//----------------------Nacher
+    public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId) {
+        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId);
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("get participants not successfull", String.valueOf(response.code()));
+                    return;
+                }
+
+            /*    //todo is there a better solution than to add every element from online service each time?
+                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
+
+                List<Message> posts = response.body();
+                for (Message message : posts) {
+                    //only insert element in room from db if it is not the current user
+                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
+                    mMessageViewModel.insert(message);
+                    // }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.d("get Message failed", t.toString());
+            }
+        });
+    }
+
+
+    public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel) {
+        Call<List<Message>> call = mMessageService.getAllMessages();
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("get participants not successfull", String.valueOf(response.code()));
+                    return;
+                }
+
+            /*    //todo is there a better solution than to add every element from online service each time?
+                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
+
+                List<Message> posts = response.body();
+                for (Message message : posts) {
+                    //only insert element in room from db if it is not the current user
+                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
+                    mMessageViewModel.insert(message);
+                    // }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.d("get Message failed", t.toString());
+            }
+        });
+    }
+
 
     public ConversationService getConversationService() {
         return mConversationService;

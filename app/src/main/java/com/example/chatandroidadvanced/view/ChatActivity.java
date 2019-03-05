@@ -1,7 +1,10 @@
 package com.example.chatandroidadvanced.view;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,11 +23,12 @@ import com.example.chatandroidadvanced.model.ConversationService;
 import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
-import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.viewmodel.MessageListAdapter;
+import com.example.chatandroidadvanced.viewmodel.MessageViewModel;
 import com.example.chatandroidadvanced.viewmodel.RetrofitInstance;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,8 +41,9 @@ public class ChatActivity extends AppCompatActivity {
     private Conversation mConversation;
     private EditText inputText;
 
-    private MessageListAdapter messageListAdapter;
-    private LinkedList<Message> messageList = new LinkedList<>();;
+   // private MessageListAdapter messageListAdapter;
+   // private LinkedList<Message> messageList = new LinkedList<>();
+    ;
 
     private RecyclerView recyclerView;
     private String mReciverID;
@@ -46,34 +51,59 @@ public class ChatActivity extends AppCompatActivity {
     private String mConversationId;
     private SharedPreferences preferences;
 
+    private RetrofitInstance retrofitInstance;
+    private MessageViewModel mMessageViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbarChat);
+        retrofitInstance = new RetrofitInstance();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarChat);
         setSupportActionBar(toolbar);
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
-        mSenderId = preferences.getString(MainActivity.ID,"");
-        Log.d("fooExtra" , mSenderId);
+        mSenderId = preferences.getString(MainActivity.ID, "");
+        Log.d("fooExtra", mSenderId);
 
         //todo get clicked contact from contactlistadapter and set it as toolbar header
-        if(getIntent().getExtras() != null) {
-          Participant  participant = (Participant) getIntent().getSerializableExtra("contact");
+        if (getIntent().getExtras() != null) {
+            Participant participant = (Participant) getIntent().getSerializableExtra("contact");
             String firstName = participant.getfirstName();
             String lastName = participant.getlastName();
             mReciverID = participant.getIDServer();
-            Log.d("fooExtra" , mReciverID);
-            Log.d("fooExtra" , participant.getfirstName());
+            Log.d("fooExtra", mReciverID);
+            Log.d("fooExtra", participant.getfirstName());
             //toolbar.setTitle(firstName + " " + lastName);
             //toolbar.setTitle(conversation.getCreatedBy());
-            mConversation = new Conversation(firstName + " / " + lastName, "" );
+            mConversation = new Conversation(firstName + " / " + lastName, "");
         }
 
-        inputText = (EditText)findViewById(R.id.chatInputText);
+        inputText = (EditText) findViewById(R.id.chatInputText);
 
         recyclerView = (RecyclerView)findViewById(R.id.rcvChat);
+        final MessageListAdapter adapter = new MessageListAdapter(this,preferences);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+       /* recyclerView = (RecyclerView)findViewById(R.id.rcvChat);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));*/
+
+       // retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
+        //ToDo get all messages by ID
+        mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
+
+        //ToDo delteAll ist nicht richtig.
+        mMessageViewModel.deleteAll();
+        retrofitInstance.getAllMessagesByReciverId(getApplicationContext(), mMessageViewModel,Integer.valueOf(mReciverID));
+       // retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
+        mMessageViewModel.getAllMessages().observe(this, new Observer<List<Message>>() {
+            @Override
+            public void onChanged(@Nullable List<Message> messages) {
+                //sets the adapter to the recyclerview and keeps all updated
+                adapter.setmMessages(messages);
+            }
+        });
     }
 
     @Override
@@ -86,8 +116,8 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.btnBackToConversations){
-            Toast.makeText(getApplicationContext() ,"Back to conversations!", Toast.LENGTH_LONG).show();
+        if (id == R.id.btnBackToConversations) {
+            Toast.makeText(getApplicationContext(), "Back to conversations!", Toast.LENGTH_LONG).show();
             Intent intentConversations = new Intent(this, ConversationActivity.class);
             startActivity(intentConversations);
             return true;
@@ -104,7 +134,9 @@ public class ChatActivity extends AppCompatActivity {
       /*  messageList.addLast(
                 new Message(inputText.getText().toString(), conversation.getId(), conversation.getCreatedBy(),
                         conversation.getLastModifiedBy(),   /*user.getid*/  /*"1234", "789"));*/
-
+        final String message = inputText.getText().toString();
+        Message mMessage = new Message(message, mReciverID, mSenderId, "1");
+        mMessageViewModel.insert(mMessage);
         final RetrofitInstance retrofitInstance = new RetrofitInstance();
         ConversationService conversationService = retrofitInstance.getConversationService();
         Call<Conversation> call = conversationService.createConversation(mConversation);
@@ -113,21 +145,22 @@ public class ChatActivity extends AppCompatActivity {
             public void onResponse(Call<Conversation> call, Response<Conversation> response) {
                 if (!response.isSuccessful()) {
                     Log.d("fooRes", String.valueOf(response.code()));
-                    Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 mConversationId = response.body().getId();
- //public Message(String content, String receiverId, String senderId, String conversationId)
-                Message mMessage = new Message(inputText.getText().toString(),mReciverID,mSenderId,mConversationId);
+                //public Message(String content, String receiverId, String senderId, String conversationId)
+                Message mMessage = new Message(message, mReciverID, mSenderId, mConversationId);
                 MessageService messageService = retrofitInstance.getMessageService();
                 Call<Message> callMessage = messageService.createMessage(mMessage);
+
                 callMessage.enqueue(new Callback<Message>() {
                     @Override
                     public void onResponse(Call<Message> call, Response<Message> response) {
                         if (!response.isSuccessful()) {
                             Log.d("fooRes", String.valueOf(response.code()));
-                            Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                             return;
                         }
                     }
@@ -138,7 +171,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 //start conversation activity
-               // Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
+                // Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
                 //startActivity(intentConversations);
                 //finish();
             }
@@ -146,15 +179,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Conversation> call, Throwable t) {
                 Log.d("foofail", t.toString());
-                Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
             }
         });
 
 
-
-        inputText.setText("");
-        messageListAdapter = new MessageListAdapter(this, messageList);
-        recyclerView.setAdapter(messageListAdapter);
+     /*   inputText.setText("");
+        //  messageListAdapter = new MessageListAdapter(this, messageList);
+        recyclerView.setAdapter(messageListAdapter);*/
 
     }
 }

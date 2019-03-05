@@ -84,7 +84,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
             //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
             //looking if room participant is empty
-            Log.d("Conversation info room", current.getCreatedBy() + " " + current.getCreatedDate());
+            Log.d("Conversation info room", current.getTopic() + " " + current.getId());
 
             //Alle LAst und email auch
             holder.conversationEmail.setText(current.getTopic());

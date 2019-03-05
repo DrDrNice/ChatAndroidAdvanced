@@ -42,6 +42,8 @@ public class ConversationActivity extends AppCompatActivity {
  */
     private ParticipantViewModel mParticipantViewModel;
     private ConversationViewModel mConversationViewModel;
+
+   // private ParticipantViewModel mParticipantViewModeltest;
    // private RetrofitInstance retrofitInstance;
 
     @Override
@@ -78,6 +80,10 @@ public class ConversationActivity extends AppCompatActivity {
         //allgemein machen
         RetrofitInstance retrofitInstance = new RetrofitInstance();
         mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
+
+      //  mParticipantViewModeltest = ViewModelProviders.of(this).get(ParticipantViewModel.class);
+
+
 
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
         retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
