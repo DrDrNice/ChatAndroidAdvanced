@@ -13,14 +13,20 @@ public class MessageRepository {
     private LiveData<List<Message>> mAllMessages;
 
 
+
     public MessageRepository(Application application) {
         MessageRoomDatabase db = MessageRoomDatabase.getDatabase(application);
         mMessageDao = db.messageDao();
         mAllMessages = mMessageDao.getAllMessage();
+
     }
 
     public LiveData<List<Message>> getmAllMessages() {
         return mAllMessages;
+    }
+
+    public LiveData<List<Message>> getAllMessagesID(int recID, int convID) {
+        return mMessageDao.getAllMessagebyReciverConvId(recID,convID);
     }
 
     public void insert(Message message) {

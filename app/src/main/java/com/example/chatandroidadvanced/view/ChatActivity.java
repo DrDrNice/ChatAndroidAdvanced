@@ -94,10 +94,12 @@ public class ChatActivity extends AppCompatActivity {
         mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
 
         //ToDo delteAll ist nicht richtig.
-        mMessageViewModel.deleteAll();
-        retrofitInstance.getAllMessagesByReciverId(getApplicationContext(), mMessageViewModel,Integer.valueOf(mReciverID));
-       // retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
-        mMessageViewModel.getAllMessages().observe(this, new Observer<List<Message>>() {
+      //  mMessageViewModel.deleteAll();
+      // retrofitInstance.getAllMessagesByReciverId(getApplicationContext(), mMessageViewModel,Integer.valueOf(mReciverID),"192");
+        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
+     //   mMessageViewModel.getAllMessages().observe(this, new Observer<List<Message>>() {
+        //ToDO convID
+       mMessageViewModel.getAllMessagesbyID(Integer.valueOf(mSenderId),192).observe(this, new Observer<List<Message>>() {
             @Override
             public void onChanged(@Nullable List<Message> messages) {
                 //sets the adapter to the recyclerview and keeps all updated
@@ -135,8 +137,8 @@ public class ChatActivity extends AppCompatActivity {
                 new Message(inputText.getText().toString(), conversation.getId(), conversation.getCreatedBy(),
                         conversation.getLastModifiedBy(),   /*user.getid*/  /*"1234", "789"));*/
         final String message = inputText.getText().toString();
-        Message mMessage = new Message(message, mReciverID, mSenderId, "1");
-        mMessageViewModel.insert(mMessage);
+        //Message mMessage = new Message(message, mReciverID, mSenderId, "1");
+        //mMessageViewModel.insert(mMessage);
         final RetrofitInstance retrofitInstance = new RetrofitInstance();
         ConversationService conversationService = retrofitInstance.getConversationService();
         Call<Conversation> call = conversationService.createConversation(mConversation);
@@ -151,9 +153,17 @@ public class ChatActivity extends AppCompatActivity {
 
                 mConversationId = response.body().getId();
                 //public Message(String content, String receiverId, String senderId, String conversationId)
-                Message mMessage = new Message(message, mReciverID, mSenderId, mConversationId);
+
+              //Message mMessage = new Message(message, mReciverID, mSenderId, mConversationId);
+
+                // ToDO convID ändern
+                Message mMessage = new Message(message, mReciverID, mSenderId, String.valueOf(192));
                 MessageService messageService = retrofitInstance.getMessageService();
                 Call<Message> callMessage = messageService.createMessage(mMessage);
+
+                mMessageViewModel.insert(mMessage);
+
+
 
                 callMessage.enqueue(new Callback<Message>() {
                     @Override

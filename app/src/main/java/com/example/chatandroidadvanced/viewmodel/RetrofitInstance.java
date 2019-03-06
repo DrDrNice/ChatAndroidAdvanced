@@ -206,7 +206,7 @@ public class RetrofitInstance {
     }
 
 //----------------------Nacher
-    public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId) {
+    public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId, final String convId) {
         Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId);
         call.enqueue(new Callback<List<Message>>() {
             @Override
@@ -221,6 +221,7 @@ public class RetrofitInstance {
 
                 List<Message> posts = response.body();
                 for (Message message : posts) {
+                    if(convId.equals(message.getConversationId()))
                     //only insert element in room from db if it is not the current user
                     //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
                     mMessageViewModel.insert(message);

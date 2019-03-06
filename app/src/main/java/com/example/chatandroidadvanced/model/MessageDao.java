@@ -32,6 +32,10 @@ public interface MessageDao {
     @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId " + "OR senderId LIKE :recId ORDER BY id ASC")
     LiveData<List<Message>> getAllMessagebyReciverId(int recId);
 
+
+    @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId AND conversationId LIKE :convId " + "OR senderId LIKE :recId AND conversationId LIKE :convId ORDER BY id ASC")
+    LiveData<List<Message>> getAllMessagebyReciverConvId(int recId, int convId);
+
     @Update
     void update(Message... messages);
 }

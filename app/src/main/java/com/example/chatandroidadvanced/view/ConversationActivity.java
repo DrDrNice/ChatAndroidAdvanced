@@ -19,10 +19,12 @@ import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
+import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
 import com.example.chatandroidadvanced.viewmodel.ConversationListAdapter;
 import com.example.chatandroidadvanced.viewmodel.ConversationViewModel;
+import com.example.chatandroidadvanced.viewmodel.MessageViewModel;
 import com.example.chatandroidadvanced.viewmodel.ParticipantListAdapter;
 import com.example.chatandroidadvanced.viewmodel.ParticipantViewModel;
 import com.example.chatandroidadvanced.viewmodel.RetrofitInstance;
@@ -42,6 +44,8 @@ public class ConversationActivity extends AppCompatActivity {
  */
     private ParticipantViewModel mParticipantViewModel;
     private ConversationViewModel mConversationViewModel;
+
+    private MessageViewModel mMessageViewModel;
 
    // private ParticipantViewModel mParticipantViewModeltest;
    // private RetrofitInstance retrofitInstance;
@@ -81,12 +85,16 @@ public class ConversationActivity extends AppCompatActivity {
         RetrofitInstance retrofitInstance = new RetrofitInstance();
         mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
 
+        mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
+
       //  mParticipantViewModeltest = ViewModelProviders.of(this).get(ParticipantViewModel.class);
 
 
 
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
         retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
+
+        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
 
         RecyclerView recyclerView = findViewById(R.id.rcvConversations);
         final ConversationListAdapter adapter = new ConversationListAdapter(this);

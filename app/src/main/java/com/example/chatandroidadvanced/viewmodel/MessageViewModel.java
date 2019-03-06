@@ -24,6 +24,11 @@ public class MessageViewModel extends AndroidViewModel {
 
     public LiveData<List<Message>> getAllMessages() {return mAllMessages;}
 
+
+    public LiveData<List<Message>> getAllMessagesbyID(int recID, int convID) {return mRepository.getAllMessagesID(recID,convID);}
+
+
+
     public void insert(Message message){
         mRepository.insert(message);}
 

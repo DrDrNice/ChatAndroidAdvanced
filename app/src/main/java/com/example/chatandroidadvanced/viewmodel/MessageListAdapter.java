@@ -86,6 +86,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     public int getItemViewType(int position) {
 
         String mSenderId = mPreferences.getString(MainActivity.ID, "");
+
         if (mMessages.get(position).getSenderId().equals(mSenderId)) {
             return MSG_TYPE_ME;
         } else {
