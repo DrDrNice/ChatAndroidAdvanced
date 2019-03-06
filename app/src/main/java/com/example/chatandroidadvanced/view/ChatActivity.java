@@ -75,14 +75,23 @@ public class ChatActivity extends AppCompatActivity {
         newMessage = true;
         //todo get clicked contact from contactlistadapter and set it as toolbar header
         if (getIntent().getExtras() != null) {
-            Participant participant = (Participant) getIntent().getSerializableExtra("contact");
-            mFirstName = participant.getfirstName();
-            mLastName = participant.getlastName();
-            mReciverID = participant.getIDServer();
-            mEMail = participant.getEmail();
-            Log.d("fooExtra", mReciverID);
-            Log.d("fooExtra", participant.getfirstName());
-            //toolbar.setTitle(firstName + " " + lastName);
+            if(getIntent().getIntExtra("CODE", 0) == 1 ){
+                Conversation conversation = (Conversation) getIntent().getSerializableExtra("Conversation");
+                mFirstName = conversation.getFirstName();
+                mLastName = conversation.getLastName();
+                mReciverID = conversation.getReceiverId();
+                mEMail =conversation.getEmail();
+                toolbar.setTitle(mFirstName + " " + mLastName);
+            }else {
+                Participant participant = (Participant) getIntent().getSerializableExtra("contact");
+                mFirstName = participant.getfirstName();
+                mLastName = participant.getlastName();
+                mReciverID = participant.getIDServer();
+                mEMail = participant.getEmail();
+                Log.d("fooExtra", mReciverID);
+                Log.d("fooExtra", participant.getfirstName());
+                toolbar.setTitle(mFirstName + " " + mLastName);
+            }
             //toolbar.setTitle(conversation.getCreatedBy());
             //mConversation = new Conversation(firstName + " / " + lastName, "");
         }

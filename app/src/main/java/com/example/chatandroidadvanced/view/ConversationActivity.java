@@ -147,7 +147,12 @@ public class ConversationActivity extends AppCompatActivity {
             public void onItemClick(View v, int position) {
                 //start chat activity and put clicked participant as extra to chatactiviy
                 Conversation myConversation = adapter.getConversationdAtPosition(position);
+
+
+                //todo acitvate put extra to get it in next activity
                 Intent intentChat = new Intent(ConversationActivity.this, ChatActivity.class);
+                intentChat.putExtra("CODE", 1);
+                intentChat.putExtra("Conversation", myConversation);
                 //todo acitvate put extra to get it in next activity
                 //intentChat.putExtra(NEW_SELECTED_PARTICIPANT, myParticipent);
                 startActivity(intentChat);
