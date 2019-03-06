@@ -39,6 +39,72 @@ public class Conversation implements Serializable {
     @ColumnInfo(name = "topic")
     private String topic;
 
+    public void setContent(@NonNull String content) {
+        this.content = content;
+    }
+
+    @NonNull
+    public String getContent() {
+        return content;
+    }
+
+    //-------
+    @SerializedName("content")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "content")
+    private String content;
+
+    @NonNull
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(@NonNull String firstName) {
+        this.firstName = firstName;
+    }
+
+    @NonNull
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NonNull String lastName) {
+        this.lastName = lastName;
+    }
+
+    @SerializedName("receiverId")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "receiverId")
+    private String receiverId;
+
+    @SerializedName("senderId")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "senderId")
+    private String senderId;
+
+
+    @SerializedName("email")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "email")
+    public String email;
+
+    @SerializedName("firstName")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "firstName")
+    public String firstName;
+
+    @SerializedName("lastName")
+    @Expose
+    @NonNull
+    @ColumnInfo(name = "lastName")
+    public String lastName;
+
+
     @Ignore
     @Expose
     private String lastModifiedBy;
@@ -51,16 +117,56 @@ public class Conversation implements Serializable {
     @Expose
     private String createdBy;
 
+    @NonNull
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(@NonNull String receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public void setSenderId(@NonNull String senderId) {
+        this.senderId = senderId;
+    }
+
+    public void setEmail(@NonNull String email) {
+        this.email = email;
+    }
+
+    @NonNull
+    public String getSenderId() {
+        return senderId;
+    }
+
+    @NonNull
+    public String getEmail() {
+        return email;
+    }
+
     @Ignore
     @Expose
     private String createdDate;
 
 
+    @Ignore
     public Conversation(String topic, String id) {
         this.topic = topic;
         this.id = id;
     }
 
+
+
+    public Conversation(String topic, String id , String senderId, String receiverId, String email, String content , String firstName , String lastName) {
+        this.topic = topic;
+        this.id = id;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.email = email;
+        this.content = content;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;

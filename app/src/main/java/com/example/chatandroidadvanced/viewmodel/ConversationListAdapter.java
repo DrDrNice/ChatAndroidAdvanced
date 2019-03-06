@@ -87,22 +87,22 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
             Log.d("Conversation info room", current.getTopic() + " " + current.getId());
 
             //Alle LAst und email auch
-            holder.conversationEmail.setText(current.getTopic());
-            holder.conversationTime.setText("");
-            holder.conversationPartner.setText("Test");
+            holder.conversationContent.setText(current.getContent());
+            holder.conversationPartner.setText(current.getFirstName() + " " + current.getLastName());
+           // holder.conversationPartner.setText("Test");
 
             //todo should image be loaded when user is created??
-           String image = "https://robohash.org/" ;
-         /*  GlideApp.with(mContext)
+           String image = "https://robohash.org/" + current.getEmail() ;
+           GlideApp.with(mContext)
                     .load(image)
                     .placeholder(R.drawable.ic_loading_image)
                     .error(R.drawable.ic_loading_error)
-                    .into(holder.conversationImage);*/
+                    .into(holder.conversationImage);
         } else {
             // Covers the case of data not being ready yet.
             //  holder.wordItemView.setText("No Word");
-            holder.conversationEmail.setText("NoEmail");
-            holder.conversationTime.setText("");
+            holder.conversationContent.setText("");
+           // holder.conversationTime.setText("");
             holder.conversationPartner.setText("NoPartner");
         }
     }
@@ -124,15 +124,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
         public final ImageView conversationImage;
         public final TextView conversationPartner;
-        public final TextView conversationEmail;
-        public final TextView conversationTime;
+        public final TextView conversationContent;
+      //  public final TextView conversationTime;
 
         private ConversationViewHolder(View itemView) {
             super(itemView);
             conversationImage = itemView.findViewById(R.id.conversationImage);
             conversationPartner = itemView.findViewById(R.id.conversationPartner);
-            conversationEmail = itemView.findViewById(R.id.conversationMessage);
-            conversationTime = itemView.findViewById(R.id.conversationTime);
+            conversationContent = itemView.findViewById(R.id.conversationMessage);
+          //  conversationTime = itemView.findViewById(R.id.conversationTime);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

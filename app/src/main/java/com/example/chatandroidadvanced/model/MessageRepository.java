@@ -29,6 +29,10 @@ public class MessageRepository {
         return mMessageDao.getAllMessagebyReciverConvId(recID,convID);
     }
 
+    public LiveData<List<Message>> getAllMessagesRecSendID(int recID, int sendID) {
+        return mMessageDao.getAllMessagebyReciverSendId(recID,sendID);
+    }
+
     public void insert(Message message) {
         new MessageRepository.insertAsyncTask(mMessageDao).execute(message);
     }
