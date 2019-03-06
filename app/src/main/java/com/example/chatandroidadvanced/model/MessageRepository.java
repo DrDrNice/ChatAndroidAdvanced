@@ -25,8 +25,8 @@ public class MessageRepository {
         return mAllMessages;
     }
 
-    public LiveData<List<Message>> getAllMessagesID(int recID, int convID) {
-        return mMessageDao.getAllMessagebyReciverConvId(recID,convID);
+    public LiveData<List<Message>> getAllMessagesID(int recID) {
+        return mMessageDao.getAllMessagebyReciverConvId(recID);
     }
 
     public LiveData<List<Message>> getAllMessagesRecSendID(int recID, int sendID) {
@@ -36,6 +36,7 @@ public class MessageRepository {
     public void insert(Message message) {
         new MessageRepository.insertAsyncTask(mMessageDao).execute(message);
     }
+
 
     public void deleteAll() {
         new MessageRepository.deleteAllMessageAsyncTask(mMessageDao).execute();
@@ -64,6 +65,7 @@ public class MessageRepository {
             return null;
         }
     }
+
 
 
     private static class deleteAllMessageAsyncTask extends AsyncTask<Void, Void, Void> {

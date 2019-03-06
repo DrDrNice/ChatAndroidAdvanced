@@ -25,7 +25,7 @@ public class MessageViewModel extends AndroidViewModel {
     public LiveData<List<Message>> getAllMessages() {return mAllMessages;}
 
 
-    public LiveData<List<Message>> getAllMessagesbyID(int recID, int convID) {return mRepository.getAllMessagesID(recID,convID);}
+    public LiveData<List<Message>> getAllMessagesbyID(int recID) {return mRepository.getAllMessagesID(recID);}
 
     public LiveData<List<Message>> getAllMessagesbyRecSendID(int recID, int sendID) {return mRepository.getAllMessagesRecSendID(recID,sendID);}
 
@@ -33,6 +33,7 @@ public class MessageViewModel extends AndroidViewModel {
 
     public void insert(Message message){
         mRepository.insert(message);}
+
 
     public void deleteAll(){
         mRepository.deleteAll();}

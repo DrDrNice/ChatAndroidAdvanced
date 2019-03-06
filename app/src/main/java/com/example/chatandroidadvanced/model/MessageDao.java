@@ -17,6 +17,7 @@ public interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert (Message message);
 
+
     @Delete
     void deleteMessage(Message message);
 
@@ -33,8 +34,8 @@ public interface MessageDao {
     LiveData<List<Message>> getAllMessagebyReciverId(int recId);
 
 
-    @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId AND conversationId LIKE :convId " + "OR senderId LIKE :recId AND conversationId LIKE :convId ORDER BY id ASC")
-    LiveData<List<Message>> getAllMessagebyReciverConvId(int recId, int convId);
+    @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId " + " OR senderId LIKE :recId ORDER BY id ASC")
+    LiveData<List<Message>> getAllMessagebyReciverConvId(int recId);
 
     @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId AND senderId LIKE :sendId " + " OR senderId LIKE :recId AND receiverId LIKE :sendId ORDER BY id ASC")
     LiveData<List<Message>> getAllMessagebyReciverSendId(int recId, int sendId);
