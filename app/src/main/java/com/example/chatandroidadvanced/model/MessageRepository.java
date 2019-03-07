@@ -11,6 +11,7 @@ public class MessageRepository {
 
     private MessageDao mMessageDao;
     private LiveData<List<Message>> mAllMessages;
+    private Message[] mAllMessTest;
 
 
 
@@ -18,12 +19,15 @@ public class MessageRepository {
         MessageRoomDatabase db = MessageRoomDatabase.getDatabase(application);
         mMessageDao = db.messageDao();
         mAllMessages = mMessageDao.getAllMessage();
+        //mAllMessTest = mMessageDao.getAllMessageTest();
 
     }
 
     public LiveData<List<Message>> getmAllMessages() {
         return mAllMessages;
     }
+
+
 
     public LiveData<List<Message>> getAllMessagesID(int recID) {
         return mMessageDao.getAllMessagebyReciverConvId(recID);
@@ -49,6 +53,7 @@ public class MessageRepository {
     public void update(Message message)  {
         new MessageRepository.updateMessageAsyncTask(mMessageDao).execute(message);
     }
+
 
 
     private static class insertAsyncTask extends AsyncTask<Message, Void, Void> {

@@ -205,6 +205,24 @@ public class RetrofitInstance {
         });
     }
 
+    public void deleteMessage(Integer conversationId) {
+        Call<Message> call = mMessageService.deleteMessage(conversationId);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("delete participant not successfull", String.valueOf(response.code()));
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.d("delete participant not successfull", t.toString());
+            }
+        });
+    }
+
 //----------------------Nacher
     public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId, final String convId) {
         Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId);

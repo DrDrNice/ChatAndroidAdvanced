@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,6 +96,10 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        int nrMessages = recyclerView.getAdapter().getItemCount();
+        Log.d("Heureka",String.valueOf(nrMessages));
+
+
         mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
 
@@ -106,10 +111,35 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        /*  LiveData<List<Message>> messageList = mMessageViewModel.getAllMessages();
-        if (messageList == null) {
-            Log.d("foomm", "messages null");
-        }*/
+
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        Message myMessage = adapter.getMessageAtPosition(position);
+                        Toast.makeText(ChatActivity.this, "Deleting " +
+                                myMessage.getContent(), Toast.LENGTH_LONG).show();
+
+                        // Delete participant from room
+                        mMessageViewModel.deleteMessage(myMessage);
+
+                        //delete participant from database
+                        RetrofitInstance retrofitInstance = new RetrofitInstance();
+                        retrofitInstance.deleteMessage(Integer.valueOf(myMessage.getId()));
+                    }
+                });
+
+        helper.attachToRecyclerView(recyclerView);
 
 
     }
@@ -135,56 +165,82 @@ public class ChatActivity extends AppCompatActivity {
 
     //ToDo JobSchedular
     public void sendText(View view) {
+
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         final String message = inputText.getText().toString();
         mConversation = new Conversation(message, "");
 
-        addMessage(new Message(message, mReceiverID, mSenderId, ""));
+
         inputText.setText("");
         final RetrofitInstance retrofitInstance = new RetrofitInstance();
 
-        ConversationService conversationService = retrofitInstance.getConversationService();
-        Call<Conversation> call = conversationService.createConversation(mConversation);
-        call.enqueue(new Callback<Conversation>() {
-            @Override
-            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                    return;
+        int nrMessages = recyclerView.getAdapter().getItemCount()+1;
+        Log.d("Heureka",String.valueOf(nrMessages));
+
+        if(recyclerView.getAdapter().getItemCount()+1 > 1 ) {
+            addMessage(new Message(message, mReceiverID, mSenderId, ""));
+            Message test = adapter.getMessageAtPosition(0);
+            Log.d("Heurekainside", String.valueOf(test.getConversationId()));
+            Message mMessage = new Message(message, mReceiverID, mSenderId, String.valueOf(test.getConversationId()));
+            MessageService messageService = retrofitInstance.getMessageService();
+            Call<Message> callMessage = messageService.createMessage(mMessage);
+            callMessage.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                 }
 
-                Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
-                mConversationViewModel.insert(conversation);
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                }
+            });
 
-                Message mMessage = new Message(message, mReceiverID, mSenderId, response.body().getId());
-                MessageService messageService = retrofitInstance.getMessageService();
-                Call<Message> callMessage = messageService.createMessage(mMessage);
-                callMessage.enqueue(new Callback<Message>() {
-                    @Override
-                    public void onResponse(Call<Message> call, Response<Message> response) {
-                        if (!response.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                            return;
+        }else {
+            addMessage(new Message(message, mReceiverID, mSenderId, ""));
+            ConversationService conversationService = retrofitInstance.getConversationService();
+            Call<Conversation> call = conversationService.createConversation(mConversation);
+            call.enqueue(new Callback<Conversation>() {
+                @Override
+                public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
+                    mConversationViewModel.insert(conversation);
+
+                    Message mMessage = new Message(message, mReceiverID, mSenderId, response.body().getId());
+                    MessageService messageService = retrofitInstance.getMessageService();
+                    Call<Message> callMessage = messageService.createMessage(mMessage);
+                    callMessage.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (!response.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
                         }
 
-                      //  recyclerView.getAdapter().notifyItemInserted(0);
-                    }
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                        }
+                    });
+                }
 
-                    @Override
-                    public void onFailure(Call<Message> call, Throwable t) {
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call<Conversation> call, Throwable t) {
-                Log.d("foofail", t.toString());
-                Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-            }
-        });
-
+                @Override
+                public void onFailure(Call<Conversation> call, Throwable t) {
+                    Log.d("foofail", t.toString());
+                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private void addMessage(Message message) {
