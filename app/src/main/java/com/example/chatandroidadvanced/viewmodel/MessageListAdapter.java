@@ -30,7 +30,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     public static final int MSG_TYPE_ME = 1;
     private final LayoutInflater mInflater;
     private List<Message> mMessages;
-    private static ClickListener clickListener;
+   // private static ClickListener clickListener;
     private Context mContext;
     private SharedPreferences mPreferences;
 
@@ -52,15 +52,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         View itemView =mInflater.inflate(getLayout(viewType), parent, false);
         return new MessageListAdapter.MessageViewHolder(itemView);
 
-      /*  if(viewType == MSG_TYPE_RIGHT){
-            View itemView =mInflater.inflate(R.layout.chat_item_me, parent, false);
-            return new MessageListAdapter.MessageViewHolder(itemView);
-        } else if (viewType == MSG_TYPE_LEFT){
-            View itemView = mInflater.inflate(R.layout.chat_item_other, parent, false);
-            return new MessageListAdapter.MessageViewHolder(itemView);
-        } else {
-            throw new IllegalArgumentException("Unsupported viewType");
-        }*/
     }
 
     @Override
@@ -75,8 +66,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
             //Alle LAst und email auch
             holder.messageTextView.setText(current.getContent());
         } else {
-            // Covers the case of data not being ready yet.
-            //  holder.wordItemView.setText("No Word");
             holder.messageTextView.setText("DummyData");
 
         }
@@ -127,25 +116,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         private MessageViewHolder(View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.message);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    clickListener.onItemClick(view, getAdapterPosition());
-                }
-            });
         }
     }
-
-    public void setOnItemClickListener(MessageListAdapter.ClickListener clickListener) {
-        MessageListAdapter.clickListener = clickListener;
-    }
-
-    public interface ClickListener {
-        void onItemClick(View v, int position);
-    }
-
-
 }
 
 

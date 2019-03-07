@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
@@ -51,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mFirstName;
     private String mLastName;
     private String mEMail;
+    private ScrollView scrollView;
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
@@ -96,8 +98,6 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        int nrMessages = recyclerView.getAdapter().getItemCount();
-        Log.d("Heureka",String.valueOf(nrMessages));
 
 
         mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
@@ -108,6 +108,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<Message> messages) {
                 //sets the adapter to the recyclerview and keeps all updated
                 adapter.setmMessages(messages);
+               recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
         });
 
@@ -141,8 +142,15 @@ public class ChatActivity extends AppCompatActivity {
 
         helper.attachToRecyclerView(recyclerView);
 
+       /* recyclerView.getAdapter().notifyDataSetChanged();
+        int nrMessages = recyclerView.getAdapter().getItemCount();
+        int nrMessage = recyclerView.getAdapter().getItemCount();
+        Log.d("Heureka",String.valueOf(nrMessages) + " " + String.valueOf(nrMessage));
+        recyclerView.smoothScrollToPosition(adapter.getItemCount() );*/
+
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -247,5 +255,6 @@ public class ChatActivity extends AppCompatActivity {
         adapter.addMessage(message);
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
+
 
 }
