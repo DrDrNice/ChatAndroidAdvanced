@@ -61,7 +61,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
             //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
             //looking if room participant is empty
-            Log.d("messageinfo room", current.getContent() + " " + current.getSenderId() + " "+ current.getReceiverId());
+            Log.d("Adapter call messageinfo room", current.getContent() + " " + current.getSenderId() + " "+ current.getReceiverId());
 
             //Alle LAst und email auch
             holder.messageTextView.setText(current.getContent());

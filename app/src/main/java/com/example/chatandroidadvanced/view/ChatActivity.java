@@ -190,9 +190,9 @@ public class ChatActivity extends AppCompatActivity{
         } else {
             Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
         }
-
+*/
         this.mHandler = new Handler();
-        mRunnable.run();*/
+        mRunnable.run();
        /* recyclerView.getAdapter().notifyDataSetChanged();
         int nrMessages = recyclerView.getAdapter().getItemCount();
         int nrMessage = recyclerView.getAdapter().getItemCount();
@@ -311,18 +311,8 @@ public class ChatActivity extends AppCompatActivity{
         @Override
         public void run() {
             ChatActivity.this.mHandler.postDelayed(mRunnable, 4000);
-
-
-            //Message message = new Message("StachChristian", "196", "198","337");
-         //  mMessageViewModel.insert(message);
-           // mMessageViewModel.getAllMessages();
-         //   mMessageViewModel.deleteMessage(message);
-
-     /* List<Message>  messageList =   mMessageViewModel.getMessagefirst(Integer.valueOf(mReceiverID));
-      Message message = messageList.get(0);
-      Log.d("Foor", String.valueOf(message.getRoomId()));
-      mMessageViewModel.update(new Message(message.getRoomId(),message.getContent(),message.getConversationId(),message.getSenderId(),message.getConversationId()));
-*/
+            RetrofitInstance retrofitInstance = new RetrofitInstance();
+            retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
         }
     };
 
