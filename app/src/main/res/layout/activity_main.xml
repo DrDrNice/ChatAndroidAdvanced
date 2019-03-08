@@ -51,7 +51,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/e_mail"
-                android:text="email"
                 android:textColorLink="@color/colorPrimaryDark" />
         </android.support.design.widget.TextInputLayout>
 
@@ -65,7 +64,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/first_name"
-                android:text="firstname"
                 android:textColorLink="@color/colorPrimaryDark" />
         </android.support.design.widget.TextInputLayout>
 
@@ -81,7 +79,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/last_name"
-                android:text="lastname"
                 android:textColorLink="@color/colorPrimaryDark" />
         </android.support.design.widget.TextInputLayout>
 
