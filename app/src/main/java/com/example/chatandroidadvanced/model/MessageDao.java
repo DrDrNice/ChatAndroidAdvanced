@@ -15,7 +15,7 @@ import java.util.List;
 public interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert (Message message);
+    long insert (Message message);
 
 
     @Delete

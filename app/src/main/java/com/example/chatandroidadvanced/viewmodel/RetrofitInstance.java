@@ -272,7 +272,10 @@ public class RetrofitInstance {
                 for (Message message : posts) {
                     //only insert element in room from db if it is not the current user
                     //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
-                    mMessageViewModel.insert(message);
+                if( mMessageViewModel.insert(message) != -1) {
+                    
+                    Log.d("Retro Test", String.valueOf(mMessageViewModel.insert(message)) + "Heuraka");
+                }
                     // }
                 }
             }

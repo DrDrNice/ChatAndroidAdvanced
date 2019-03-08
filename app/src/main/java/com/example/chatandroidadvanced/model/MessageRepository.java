@@ -38,8 +38,15 @@ public class MessageRepository {
         return mMessageDao.getAllMessagebyReciverSendId(recID,sendID);
     }
 
-    public void insert(Message message) {
-        new MessageRepository.insertAsyncTask(mMessageDao).execute(message);
+    public long insert(Message message) {
+        try {
+            return  new insertAsyncTask(mMessageDao).execute(message).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
 
@@ -66,7 +73,7 @@ public List<Message> getMessageFirst(int recId){
     return null;
 }
 
-    private static class insertAsyncTask extends AsyncTask<Message, Void, Void> {
+    private static class insertAsyncTask extends AsyncTask<Message, Void, Long> {
 
         private MessageDao mAsyncTaskDao;
 
@@ -75,9 +82,9 @@ public List<Message> getMessageFirst(int recId){
         }
 
         @Override
-        protected Void doInBackground(final Message... params) {
-            mAsyncTaskDao.insert(params[0]);
-            return null;
+        protected Long doInBackground(final Message... params) {
+          return  mAsyncTaskDao.insert(params[0]);
+          //  return null;
         }
     }
 

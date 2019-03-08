@@ -42,7 +42,6 @@ public class NotificationJobService extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
 
         JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
         JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
                 .setMinimumLatency(5000)
                 .build();

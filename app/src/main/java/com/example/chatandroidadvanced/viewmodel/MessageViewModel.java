@@ -32,8 +32,8 @@ public class MessageViewModel extends AndroidViewModel {
 
 public List<Message> getMessagefirst(int recID) {return mRepository.getMessageFirst(recID);}
 
-    public void insert(Message message){
-        mRepository.insert(message);}
+    public long insert(Message message){
+      return  mRepository.insert(message);}
 
 
     public void deleteAll(){
