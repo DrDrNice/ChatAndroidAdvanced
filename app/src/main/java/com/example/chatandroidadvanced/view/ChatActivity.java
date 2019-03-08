@@ -1,11 +1,17 @@
 package com.example.chatandroidadvanced.view;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +34,7 @@ import com.example.chatandroidadvanced.model.ConversationService;
 import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
+import com.example.chatandroidadvanced.service.NotificationJobService;
 import com.example.chatandroidadvanced.viewmodel.ConversationViewModel;
 import com.example.chatandroidadvanced.viewmodel.MessageListAdapter;
 import com.example.chatandroidadvanced.viewmodel.MessageViewModel;
@@ -41,7 +48,7 @@ import retrofit2.Response;
 
 import static com.example.chatandroidadvanced.view.MainActivity.MY_PREFERENCES;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity{
 
     private Conversation mConversation;
     private EditText inputText;
@@ -53,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mLastName;
     private String mEMail;
     private ScrollView scrollView;
+    private Handler mHandler;
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
@@ -66,6 +74,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarChat);
         setSupportActionBar(toolbar);
+
 
 
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
@@ -113,7 +122,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-        ItemTouchHelper helper = new ItemTouchHelper(
+     /*   ItemTouchHelper helper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
                     @Override
@@ -142,6 +151,48 @@ public class ChatActivity extends AppCompatActivity {
 
         helper.attachToRecyclerView(recyclerView);
 
+
+    /*   RetrofitInstance retrofitInstance = new RetrofitInstance();
+        MessageService messageService = retrofitInstance.getMessageService();
+        final Call<List<Message>> callMessage = messageService.getAllMessages();
+        callMessage.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> callMessage, Response<List<Message>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(getApplicationContext(),"Succes",Toast.LENGTH_LONG).show();
+                Log.d("foom", response.body().toString());
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"Fail",Toast.LENGTH_LONG).show();
+                Log.d("foom", t.toString());
+            }
+        });
+
+
+      JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
+                .setMinimumLatency(5000)
+                .build();
+        scheduler.schedule(job);
+
+
+        //Checks Network state
+        final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            Toast.makeText(this,"NetworkConnect", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
+        }
+
+        this.mHandler = new Handler();
+        mRunnable.run();*/
        /* recyclerView.getAdapter().notifyDataSetChanged();
         int nrMessages = recyclerView.getAdapter().getItemCount();
         int nrMessage = recyclerView.getAdapter().getItemCount();
@@ -256,5 +307,23 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
 
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            ChatActivity.this.mHandler.postDelayed(mRunnable, 4000);
+
+
+            //Message message = new Message("StachChristian", "196", "198","337");
+         //  mMessageViewModel.insert(message);
+           // mMessageViewModel.getAllMessages();
+         //   mMessageViewModel.deleteMessage(message);
+
+     /* List<Message>  messageList =   mMessageViewModel.getMessagefirst(Integer.valueOf(mReceiverID));
+      Message message = messageList.get(0);
+      Log.d("Foor", String.valueOf(message.getRoomId()));
+      mMessageViewModel.update(new Message(message.getRoomId(),message.getContent(),message.getConversationId(),message.getSenderId(),message.getConversationId()));
+*/
+        }
+    };
 
 }

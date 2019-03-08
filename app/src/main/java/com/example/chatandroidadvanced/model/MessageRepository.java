@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MessageRepository {
 
@@ -54,7 +55,16 @@ public class MessageRepository {
         new MessageRepository.updateMessageAsyncTask(mMessageDao).execute(message);
     }
 
-
+public List<Message> getMessageFirst(int recId){
+    try {
+        return  new getMessageFirstAsyncTask(mMessageDao).execute(recId).get();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
     private static class insertAsyncTask extends AsyncTask<Message, Void, Void> {
 
@@ -72,6 +82,22 @@ public class MessageRepository {
     }
 
 
+
+  private static class  getMessageFirstAsyncTask extends AsyncTask<Integer,Void,List<Message>>{
+
+      private MessageDao mAsyncTaskDao;
+
+      getMessageFirstAsyncTask(MessageDao dao) {
+          mAsyncTaskDao = dao;
+      }
+
+      @Override
+      protected List<Message> doInBackground(Integer... ints) {
+
+          return mAsyncTaskDao.getMessageFirst(ints[0]);
+
+      }
+  }
 
     private static class deleteAllMessageAsyncTask extends AsyncTask<Void, Void, Void> {
         private MessageDao mAsyncTaskDao;

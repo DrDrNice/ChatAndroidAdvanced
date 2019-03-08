@@ -32,7 +32,7 @@ public class MessageViewModel extends AndroidViewModel {
 
     public LiveData<List<Message>> getAllMessagesbyRecSendID(int recID, int sendID) {return mRepository.getAllMessagesRecSendID(recID,sendID);}
 
-
+public List<Message> getMessagefirst(int recID) {return mRepository.getMessageFirst(recID);}
 
     public void insert(Message message){
         mRepository.insert(message);}

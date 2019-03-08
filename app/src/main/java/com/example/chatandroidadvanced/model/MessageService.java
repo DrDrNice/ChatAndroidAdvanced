@@ -28,7 +28,7 @@ public interface MessageService {
     Call<Message> updateMessage();
 
     @GET("/api/messages/count")
-    Call<Message> countMessages();
+    Call<Integer> countMessages();
 
     @DELETE("/api/messages/{id}")
     Call<Message> deleteMessage(@Path("id") int postId);

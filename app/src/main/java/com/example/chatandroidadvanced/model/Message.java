@@ -73,6 +73,14 @@ public class Message implements Serializable {
         this.receiverId = receiverId;
         this.senderId = senderId;
     }
+@Ignore
+    public Message(int roomId, String content, String receiverId, String senderId, String conversationId) {
+        this.roomId = roomId;
+        this.content = content;
+        this.conversationId = conversationId;
+        this.receiverId = receiverId;
+        this.senderId = senderId;
+    }
 
     public String getContent() {
         return content;

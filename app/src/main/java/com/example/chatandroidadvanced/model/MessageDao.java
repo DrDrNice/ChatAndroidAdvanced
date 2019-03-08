@@ -35,6 +35,10 @@ public interface MessageDao {
     LiveData<List<Message>> getAllMessagebyReciverId(int recId);
 
 
+    @Query("SELECT * from message_table WHERE receiverId LIKE :recId LIMIT 1")
+    List<Message> getMessageFirst(int recId);
+
+
     @Query("SELECT * FROM message_table WHERE receiverId LIKE :recId " + " OR senderId LIKE :recId ORDER BY id ASC")
     LiveData<List<Message>> getAllMessagebyReciverConvId(int recId);
 
