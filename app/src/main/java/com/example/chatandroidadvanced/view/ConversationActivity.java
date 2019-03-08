@@ -94,7 +94,7 @@ public class ConversationActivity extends AppCompatActivity {
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
         retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
 
-        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
+        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel,"1");
 
         RecyclerView recyclerView = findViewById(R.id.rcvConversations);
         final ConversationListAdapter adapter = new ConversationListAdapter(this);

@@ -312,7 +312,7 @@ public class ChatActivity extends AppCompatActivity{
         public void run() {
             ChatActivity.this.mHandler.postDelayed(mRunnable, 4000);
             RetrofitInstance retrofitInstance = new RetrofitInstance();
-            retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel);
+            retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
         }
     };
 

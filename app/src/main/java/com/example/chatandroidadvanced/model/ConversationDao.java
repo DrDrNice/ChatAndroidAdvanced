@@ -29,6 +29,9 @@ public interface ConversationDao {
     @Query("SELECT * from conversation_table ORDER BY id ASC")
     LiveData<List<Conversation>> getAllConversations();
 
+    @Query("SELECT * from conversation_table ORDER BY id ASC")
+    List<Conversation> getAllConversationsList();
+
     @Update
     void update(Conversation... conversations);
 }

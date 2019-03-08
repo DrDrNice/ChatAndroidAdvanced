@@ -14,15 +14,19 @@ public class ConversationViewModel extends AndroidViewModel {
 
     private ConversationRepository mRepository;
     private LiveData<List<Conversation>> mAllConversation;
+    private List<Conversation> mAllConversationList;
 
 
     public ConversationViewModel (Application application){
         super(application);
         mRepository = new ConversationRepository(application);
         mAllConversation = mRepository.getmAllConversations();
+        mAllConversationList = mRepository.getmAllConversationsList();
     }
 
     public LiveData<List<Conversation>> getAllConversations() {return mAllConversation;}
+
+    public List<Conversation> getAllConversationsList() {return mAllConversationList;}
 
     public void insert(Conversation conversation){
         mRepository.insert(conversation);}

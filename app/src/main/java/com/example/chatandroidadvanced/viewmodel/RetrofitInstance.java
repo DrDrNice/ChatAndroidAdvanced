@@ -255,7 +255,7 @@ public class RetrofitInstance {
     }
 
 
-    public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel) {
+    public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel,final String recId  ) {
         Call<List<Message>> call = mMessageService.getAllMessages();
         call.enqueue(new Callback<List<Message>>() {
             @Override
@@ -269,13 +269,51 @@ public class RetrofitInstance {
                 SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
 
                 List<Message> posts = response.body();
-                for (Message message : posts) {
+                for (final Message message : posts) {
                     //only insert element in room from db if it is not the current user
                     //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
                 if( mMessageViewModel.insert(message) != -1) {
-                    
-                    Log.d("Retro Test", String.valueOf(mMessageViewModel.insert(message)) + "Heuraka");
-                }
+                    if(message.getReceiverId().equals(recId) ||message.getSenderId().equals(recId) ) {
+                        Log.d("Retro Test", String.valueOf(mMessageViewModel.insert(message)) + "Heuraka");
+                    List<Conversation> conversations = mConversationViewModel.getAllConversationsList();
+                    boolean inside = false;
+                    if(conversations != null){
+
+                   /*     for (Conversation conv : conversations) {
+                            Log.d("Retro Test 2" , conv.getLastName());
+                            if(conv.getSenderId().equals(message.getSenderId())){
+                                inside = true;
+                            }
+                        }
+                        if (!inside){
+
+                            ConversationService conversationService = getConversationService();
+                            Call<Conversation> callConv = conversationService.createConversation(new Conversation(message.getContent(), ""));
+                            callConv.enqueue(new Callback<Conversation>() {
+                                @Override
+                                public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                                    if (!response.isSuccessful()) {
+                                     //   Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    Conversation conversation = new Conversation(message.getContent(), response.body().getId(), message.getSenderId(), message.getReceiverId(), "Mail", "content","mFirstName", "mLastName");
+                                    mConversationViewModel.insert(conversation);
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Conversation> call, Throwable t) {
+                                    Log.d("foofail", t.toString());
+                                  //  Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                            //only insert element in room from db if it is not the current user
+                            //if (!preferences.getString(MainActivity.ID, "").
+*/
+                    }
+                }}
                     // }
                 }
             }

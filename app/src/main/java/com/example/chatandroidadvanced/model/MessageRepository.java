@@ -20,6 +20,7 @@ public class MessageRepository {
         MessageRoomDatabase db = MessageRoomDatabase.getDatabase(application);
         mMessageDao = db.messageDao();
         mAllMessages = mMessageDao.getAllMessage();
+
         //mAllMessTest = mMessageDao.getAllMessageTest();
 
     }
@@ -27,6 +28,7 @@ public class MessageRepository {
     public LiveData<List<Message>> getmAllMessages() {
         return mAllMessages;
     }
+
 
 
 

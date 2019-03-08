@@ -5,21 +5,34 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ConversationRepository {
 
     private ConversationDao mConversationDao;
     private LiveData<List<Conversation>> mAllConversations;
-
+private  List<Conversation> mAllConversationsList;
 
     public ConversationRepository(Application application) {
         ConversationRoomDatabase db = ConversationRoomDatabase.getDatabase(application);
         mConversationDao = db.conversationDao();
         mAllConversations = mConversationDao.getAllConversations();
+
     }
 
     public LiveData<List<Conversation>> getmAllConversations() {
         return mAllConversations;
+    }
+
+    public List<Conversation> getmAllConversationsList() {
+        try {
+            return  new ConversationRepository.getAsyncTask(mConversationDao).execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void insert(Conversation conversation) {
@@ -37,6 +50,25 @@ public class ConversationRepository {
 
     public void update(Conversation conversation)  {
         new ConversationRepository.updateConversationAsyncTask(mConversationDao).execute(conversation);
+    }
+
+
+
+    private static class getAsyncTask extends AsyncTask<Void,Void,List<Conversation>>{
+
+        private ConversationDao mAsyncTaskDao;
+
+        getAsyncTask(ConversationDao dao) {mAsyncTaskDao = dao;}
+
+
+
+        @Override
+        protected List<Conversation> doInBackground(Void... voids) {
+
+            return mAsyncTaskDao.getAllConversationsList();
+
+        }
+
     }
 
 
