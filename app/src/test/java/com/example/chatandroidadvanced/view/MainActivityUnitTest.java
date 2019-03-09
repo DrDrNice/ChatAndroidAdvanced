@@ -1,5 +1,6 @@
 package com.example.chatandroidadvanced.view;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
@@ -14,8 +15,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.never;
@@ -24,23 +26,22 @@ import static org.mockito.Mockito.verify;
 
 import static org.junit.Assert.*;
 
-//@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class MainActivityUnitTest {
 
     @Mock
-    private MainActivity mMainActivity;// = mock(MainActivity.class);
+    private MainActivity mMainActivity;
 
     @Mock
-    private RetrofitInstance mRetrofitInstance;// = mock(RetrofitInstance.class);
+    private RetrofitInstance mRetrofitInstance;
 
     @Mock
-    private View mView;
-
-    @Mock
-    private Context mContext;
+    private View mView = null;
 
     @Before
-    public void setUp() throws Exception { MockitoAnnotations.initMocks(this); }
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void createUserClicked() {
