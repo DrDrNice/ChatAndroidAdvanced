@@ -242,6 +242,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
             addMessage(new Message(message, mReceiverID, mSenderId, ""));
             Message test = adapter.getMessageAtPosition(0);
             Log.d("Heurekainside", String.valueOf(test.getConversationId()));
+
             Message mMessage = new Message(message, mReceiverID, mSenderId, String.valueOf(test.getConversationId()));
             MessageService messageService = retrofitInstance.getMessageService();
             Call<Message> callMessage = messageService.createMessage(mMessage);

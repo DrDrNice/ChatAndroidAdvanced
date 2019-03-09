@@ -29,7 +29,9 @@ public class MessageRepository {
         return mAllMessages;
     }
 
-
+    public LiveData<List<Message>> getAllMessagesByReciverID(int recID) {
+        return mMessageDao.getAllMessagebyReciverId(recID);
+    }
 
 
     public LiveData<List<Message>> getAllMessagesID(int recID) {

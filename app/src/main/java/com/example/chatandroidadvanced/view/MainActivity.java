@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             //start conversation activity
             JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
             JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
-                    .setMinimumLatency(5000)
+                    .setMinimumLatency(1000)
                     .build();
             scheduler.schedule(job);
             

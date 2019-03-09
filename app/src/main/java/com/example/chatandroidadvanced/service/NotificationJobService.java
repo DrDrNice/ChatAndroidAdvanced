@@ -59,7 +59,7 @@ public class NotificationJobService extends JobService {
         mReciverId = preferences.getString(MainActivity.ID, "");
         JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         JobInfo job = new JobInfo.Builder(1, new ComponentName(this, NotificationJobService.class))
-                .setMinimumLatency(5000)
+                .setMinimumLatency(1000)
                 .build();
         scheduler.schedule(job);
 
@@ -68,8 +68,8 @@ public class NotificationJobService extends JobService {
 
         final MessageViewModel mMessageViewModel = new MessageViewModel(getApplication());
 
-        //Fetch Room
-        mMessageViewModel.getAllMessages().observeForever(new Observer<List<Message>>() {
+        //Fetch Room for Saved Messages
+        mMessageViewModel.getAllMessagesByReciverID(Integer.valueOf(mReciverId)).observeForever(new Observer<List<Message>>() {
             @Override
             public void onChanged(@Nullable List<Message> messages) {
 
@@ -78,65 +78,78 @@ public class NotificationJobService extends JobService {
                 Log.d("OnChangedLiveData", "JOBChangedLiveData");
                 final int size = messages.size();
                 final List<Message> rommMessages = messages;
-                //--------- FETCH SERVER
+
+                //--------- FETCH SERVER for saved messages ToDO use ReciverID
                 MessageService mMessageService = retrofitInstance.getMessageService();
-                Call<List<Message>> call = mMessageService.getAllMessages(0);
+                Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(Integer.valueOf(mReciverId));
                 call.enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
                         if (!response.isSuccessful()) {
-                            Log.d("get participants not successfull", String.valueOf(response.code()));
                             return;
                         }
 
                         final List<Message> posts = response.body();
 
-                        Log.d("OnChangedLiveData", "------SIZE:" + String.valueOf(posts.size()) + " / " + size);
-                        if (posts.size() != size) {
+                        for(int i = 0; i< posts.size(); i++){
+                           Log.d("foop", posts.get(i).getContent());
+                        }
+                        Log.d("OnChangedLiveData", "------SIZE:" + String.valueOf(posts.size()) + " / RoomSize: " + size);
+
+                        //Server size passt nicht mit Room size.
+                        if (posts.size() > size) {
                             int sizeMin = Math.min(posts.size(), size);
                             int sizeMax = Math.max(posts.size(), size);
                             for (int i = sizeMin; i < sizeMax; i++) {
                                 // if(!posts.get(i).getId().equals(rommMessages.get(i).getId())){
                                 createNotificationChannel();
-                                if (posts.get(i).getReceiverId().equals(mReciverId)) {
+                              //  if (posts.get(i).getReceiverId().equals(mReciverId)) {
                                     createPending();
                                     mMessageViewModel.insert(posts.get(i));
                                     final Message messageTemp = posts.get(i);
                                     final ConversationViewModel mConversationViewModel = new ConversationViewModel(getApplication());
+
                                     //Fetch Conversation Room
                                     mConversationViewModel.getAllConversations().observeForever(new Observer<List<Conversation>>() {
                                         @Override
                                         public void onChanged(@Nullable List<Conversation> conversations) {
 
+                                            int counterTemp = 0;
                                             for (final Conversation conv : conversations) {
                                                 Log.d("foo", "------CONVI:");
                                                 Log.d("foo", "convID " + conv.getId() + " / " + messageTemp.getConversationId());
                                                 if (!conv.getId().equals(messageTemp.getConversationId())) {
                                                     //  (String topic, String id , String senderId, String receiverId, String email, String content , String firstName , String lastName) {
                                                     Log.d("foo", "------CONVI222:");
-                                                    ParticipantService participantService = retrofitInstance.getParticipantService();
-                                                    Call<Participant> call = participantService.getParticipant(Integer.valueOf(messageTemp.getSenderId()));
-                                                    call.enqueue(new Callback<Participant>() {
-
-                                                        @Override
-                                                        public void onResponse(Call<Participant> call, Response<Participant> response) {
-                                                            Participant p = response.body();
-                                                            Log.d("foo", p.getfirstName());
-                                                            mConversationViewModel.insert(new Conversation(messageTemp.getContent()
-                                                                    , messageTemp.getConversationId(), messageTemp.getReceiverId()
-                                                                    , messageTemp.getSenderId(), p.getEmail(), messageTemp.getContent(), p.getfirstName(), p.getlastName()));
-                                                        }
-
-                                                        @Override
-                                                        public void onFailure(Call<Participant> call, Throwable t) {
-
-                                                        }
-                                                    });
+                                                    counterTemp++;
                                                 }
                                             }
-                                        }
+                                            if (counterTemp == conversations.size()) {
+                                                //Fetch from Server information about sender of the message
+                                                ParticipantService participantService = retrofitInstance.getParticipantService();
+                                                Call<Participant> call = participantService.getParticipant(Integer.valueOf(messageTemp.getSenderId()));
+                                                call.enqueue(new Callback<Participant>() {
+
+                                                    @Override
+                                                    public void onResponse(Call<Participant> call, Response<Participant> response) {
+                                                        Participant p = response.body();
+                                                        Log.d("foo", p.getfirstName());
+                                                        mConversationViewModel.insert(new Conversation(messageTemp.getContent()
+                                                                , messageTemp.getConversationId(), messageTemp.getReceiverId()
+                                                                , messageTemp.getSenderId(), p.getEmail(), messageTemp.getContent(), p.getfirstName(), p.getlastName()));
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<Participant> call, Throwable t) {
+
+                                                    }
+                                                });
+                                                //}
+                                            }
+                                            }
+
                                     });
-                                }
+                               //if ob reciver id ich bin }
                             }
                         }
 
