@@ -112,7 +112,7 @@ public class AddConversationActivity extends AppCompatActivity {
         });
     }
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_conversation, menu);
         return true;
@@ -132,5 +132,5 @@ public class AddConversationActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

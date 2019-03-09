@@ -80,7 +80,7 @@ public class NotificationJobService extends JobService {
                 final List<Message> rommMessages = messages;
                 //--------- FETCH SERVER
                 MessageService mMessageService = retrofitInstance.getMessageService();
-                Call<List<Message>> call = mMessageService.getAllMessages();
+                Call<List<Message>> call = mMessageService.getAllMessages(0);
                 call.enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -257,7 +257,7 @@ public class NotificationJobService extends JobService {
                 .setContentTitle("Android Chat App")
                 .setContentText("New Message")
                 .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.ic_autorenew_black_24dp)
+                .setSmallIcon(R.drawable.ic_message_notification)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);

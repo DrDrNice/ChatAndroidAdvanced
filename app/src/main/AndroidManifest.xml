@@ -23,10 +23,10 @@
 
         <activity
             android:name=".view.ChatActivity"
-            android:parentActivityName=".view.ConversationActivity">
+            android:parentActivityName=".view.AddConversationActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.ConversationActivity" />
+                android:value=".view.AddConversationActivity" />
         </activity>
 
         <activity

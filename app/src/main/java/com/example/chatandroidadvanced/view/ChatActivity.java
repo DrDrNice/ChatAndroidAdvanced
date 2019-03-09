@@ -70,6 +70,7 @@ public class ChatActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+        
 
 toolbarImage = findViewById(R.id.toolbarImage);
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
@@ -202,7 +203,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
     }
 
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
@@ -219,7 +220,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     //ToDo JobSchedular
     public void sendText(View view) {

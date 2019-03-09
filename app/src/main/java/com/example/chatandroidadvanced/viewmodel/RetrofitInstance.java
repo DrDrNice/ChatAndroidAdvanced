@@ -256,7 +256,7 @@ public class RetrofitInstance {
 
 
     public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel,final String recId  ) {
-        Call<List<Message>> call = mMessageService.getAllMessages();
+        Call<List<Message>> call = mMessageService.getAllMessages(0);
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
