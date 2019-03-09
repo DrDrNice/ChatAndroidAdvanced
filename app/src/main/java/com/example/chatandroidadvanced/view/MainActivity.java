@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("preference name", preferences.getString(ID, ""));
 
         //todo delete shared preferences if new user should be logged in
-     //   preferences.edit().clear().apply();
+      //   preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
         if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //gets the input from the user as participant
-    private Participant getUserInput() {
+    public Participant getUserInput() {
         //get text from textlabels and store
         String firstName = txtFristname.getText().toString();
         String lastName = txtLastname.getText().toString();
