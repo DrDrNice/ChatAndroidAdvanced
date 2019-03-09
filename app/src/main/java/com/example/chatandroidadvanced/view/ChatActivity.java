@@ -1,40 +1,34 @@
 package com.example.chatandroidadvanced.view;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ScrollView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Conversation;
 import com.example.chatandroidadvanced.model.ConversationService;
+import com.example.chatandroidadvanced.model.GlideApp;
 import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
-import com.example.chatandroidadvanced.service.NotificationJobService;
 import com.example.chatandroidadvanced.viewmodel.ConversationViewModel;
 import com.example.chatandroidadvanced.viewmodel.MessageListAdapter;
 import com.example.chatandroidadvanced.viewmodel.MessageViewModel;
@@ -59,7 +53,7 @@ public class ChatActivity extends AppCompatActivity{
     private String mFirstName;
     private String mLastName;
     private String mEMail;
-    private ScrollView scrollView;
+   private ImageView toolbarImage;
     private Handler mHandler;
 
     private MessageViewModel mMessageViewModel;
@@ -74,9 +68,10 @@ public class ChatActivity extends AppCompatActivity{
         setContentView(R.layout.activity_chat);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarChat);
         setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
-
-
+toolbarImage = findViewById(R.id.toolbarImage);
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
         mSenderId = preferences.getString(MainActivity.ID, "");
 
@@ -100,6 +95,13 @@ public class ChatActivity extends AppCompatActivity{
             }
         }
 
+
+        String image = "https://robohash.org/" + mEMail;
+        GlideApp.with(getApplicationContext())
+                .load(image)
+                .placeholder(R.drawable.ic_loading_image)
+                .error(R.drawable.ic_loading_error)
+                .into(toolbarImage);
         inputText = (EditText) findViewById(R.id.chatInputText);
         recyclerView = (RecyclerView) findViewById(R.id.rcvChat);
 
@@ -176,11 +178,7 @@ public class ChatActivity extends AppCompatActivity{
         });
 
 */
-      JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
-                .setMinimumLatency(5000)
-                .build();
-        scheduler.schedule(job);
+
 
 /*
         //Checks Network state

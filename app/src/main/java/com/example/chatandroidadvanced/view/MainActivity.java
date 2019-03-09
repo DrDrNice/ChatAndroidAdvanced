@@ -1,6 +1,10 @@
 package com.example.chatandroidadvanced.view;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TextInputLayout;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 import com.example.chatandroidadvanced.R;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
+import com.example.chatandroidadvanced.service.NotificationJobService;
 import com.example.chatandroidadvanced.viewmodel.ParticipantViewModel;
 import com.example.chatandroidadvanced.viewmodel.RetrofitInstance;
 
@@ -78,11 +83,17 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("preference name", preferences.getString(ID, ""));
 
         //todo delete shared preferences if new user should be logged in
-        preferences.edit().clear().apply();
+     //   preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
         if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
             //start conversation activity
+            JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
+                    .setMinimumLatency(5000)
+                    .build();
+            scheduler.schedule(job);
+            
             Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
             startActivity(intentConversations);
             finish();

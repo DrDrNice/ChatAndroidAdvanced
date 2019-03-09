@@ -26,7 +26,7 @@ public interface ConversationDao {
     @Query("SELECT * from conversation_table LIMIT 1")
     Conversation[] getAnyConversation();
 
-    @Query("SELECT * from conversation_table ORDER BY id ASC")
+    @Query("SELECT * from conversation_table ORDER BY id DESC")
     LiveData<List<Conversation>> getAllConversations();
 
     @Query("SELECT * from conversation_table ORDER BY id ASC")

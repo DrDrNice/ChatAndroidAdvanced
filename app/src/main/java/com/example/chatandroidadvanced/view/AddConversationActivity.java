@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,7 +51,8 @@ public class AddConversationActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarNewConversation);
         setSupportActionBar(toolbar);
-
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
         RecyclerView recyclerView = findViewById(R.id.rcvContacts);
         final ParticipantListAdapter adapter = new ParticipantListAdapter(this);
@@ -115,6 +117,7 @@ public class AddConversationActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_add_conversation, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

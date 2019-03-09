@@ -250,7 +250,7 @@ public class NotificationJobService extends JobService {
 
     public void createPending() {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(this,
-                0, new Intent(this, ConversationActivity.class),
+                0, new Intent(this, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)

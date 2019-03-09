@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,8 +57,8 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarConversations);
-        setSupportActionBar(toolbar);
-       // retrofitInstance = new RetrofitInstance();
+      setSupportActionBar(toolbar);
+                // retrofitInstance = new RetrofitInstance();
 
 
     /*-----------------------------
@@ -167,7 +168,7 @@ public class ConversationActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -175,44 +176,26 @@ public class ConversationActivity extends AppCompatActivity {
             //load all users from db and add user which are not in room into to room
             RetrofitInstance retrofitInstance = new RetrofitInstance();
             retrofitInstance.getAllParticipants(getApplicationContext(), mParticipantViewModel);
-
-            //todo delete this cause it is working with retrofit class
-            //load all users from db and add user which are not in room into to room
-            /*RetrofitInstance retrofitInstance = new RetrofitInstance();
-            ParticipantService participantService = retrofitInstance.getParticipantService();
-            Call<List<Participant>> call = participantService.getAllParticipants();
-            call.enqueue(new Callback<List<Participant>>() {
-                @Override
-                public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                    if(!response.isSuccessful()){
-                        Log.d("get participants not successfull", String.valueOf(response.code()));
-                        return;
-                    }
-
-                    //todo is there a better solution than to add every element from online service each time?
-                    SharedPreferences preferences = getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
-                    List<Participant> posts = response.body();
-                    for (Participant participant : posts) {
-                        //only insert element in room from db if it is not the current user
-                        if(!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())){
-                            mParticipantViewModel.insert(participant);
-                        }
-                    }
-                }
-                @Override
-                public void onFailure(Call<List<Participant>> call, Throwable t) {
-                    Log.d("get participants failed", t.toString());
-                }
-            });*/
-
-            //start add conversation activity
             Toast.makeText(getApplicationContext(), "Add new conversation!", Toast.LENGTH_LONG).show();
             //create new conversation if button is clicked
             Intent intentNewConversation = new Intent(this, AddConversationActivity.class);
             startActivity(intentNewConversation);
-            finish();
+          //  finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }*/
+
+    public void addConversation(View view) {
+       // int id = item.getItemId();
+
+      //  if (id == R.id.btnAddConversation) {
+            //load all users from db and add user which are not in room into to room
+            RetrofitInstance retrofitInstance = new RetrofitInstance();
+            retrofitInstance.getAllParticipants(getApplicationContext(), mParticipantViewModel);
+            Toast.makeText(getApplicationContext(), "Add new conversation!", Toast.LENGTH_LONG).show();
+            //create new conversation if button is clicked
+            Intent intentNewConversation = new Intent(this, AddConversationActivity.class);
+            startActivity(intentNewConversation);
     }
 }

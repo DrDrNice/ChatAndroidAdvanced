@@ -52,7 +52,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
 
             //Alle LAst und email auch
             holder.conversationEmail.setText(current.getEmail());
-            holder.conversationTime.setText("");
+         //   holder.conversationTime.setText("");
             holder.conversationPartner.setText(current.getfirstName() + " " + current.getlastName());
 
             //todo should image be loaded when user is created??
@@ -66,7 +66,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             // Covers the case of data not being ready yet.
           //  holder.wordItemView.setText("No Word");
             holder.conversationEmail.setText("NoEmail");
-            holder.conversationTime.setText("");
+         //   holder.conversationTime.setText("");
             holder.conversationPartner.setText("NoPartner");
         }
     }
@@ -89,14 +89,14 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
         public final ImageView conversationImage;
         public final TextView conversationPartner;
         public final TextView conversationEmail;
-        public final TextView conversationTime;
+   //     public final TextView conversationTime;
 
         private ParticipantViewHolder(View itemView) {
             super(itemView);
             conversationImage = itemView.findViewById(R.id.conversationImage);
             conversationPartner = itemView.findViewById(R.id.conversationPartner);
             conversationEmail = itemView.findViewById(R.id.conversationMessage);
-            conversationTime = itemView.findViewById(R.id.conversationTime);
+          //  conversationTime = itemView.findViewById(R.id.conversationTime);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
