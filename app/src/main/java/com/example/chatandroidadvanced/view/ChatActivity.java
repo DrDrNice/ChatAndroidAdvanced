@@ -116,6 +116,7 @@ public class ChatActivity extends AppCompatActivity{
             @Override
             public void onChanged(@Nullable List<Message> messages) {
                 //sets the adapter to the recyclerview and keeps all updated
+                Log.d("OnChangedLiveData", "ChangedLiveData");
                 adapter.setmMessages(messages);
                recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
@@ -174,14 +175,14 @@ public class ChatActivity extends AppCompatActivity{
             }
         });
 
-
+*/
       JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
                 .setMinimumLatency(5000)
                 .build();
         scheduler.schedule(job);
 
-
+/*
         //Checks Network state
         final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
