@@ -58,7 +58,7 @@ public class ChatActivity extends AppCompatActivity{
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
-
+    private final RetrofitInstance retrofitInstance = new RetrofitInstance();
     public static MessageListAdapter adapter;
 
 
@@ -120,8 +120,11 @@ toolbarImage = findViewById(R.id.toolbarImage);
             public void onChanged(@Nullable List<Message> messages) {
                 //sets the adapter to the recyclerview and keeps all updated
                 Log.d("OnChangedLiveData", "ChangedLiveData");
+
+
                 adapter.setmMessages(messages);
                recyclerView.smoothScrollToPosition(adapter.getItemCount());
+                retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
             }
         });
 
@@ -191,8 +194,8 @@ toolbarImage = findViewById(R.id.toolbarImage);
             Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
         }
 */
-        this.mHandler = new Handler();
-        mRunnable.run();
+     //   this.mHandler = new Handler();
+       // mRunnable.run();
        /* recyclerView.getAdapter().notifyDataSetChanged();
         int nrMessages = recyclerView.getAdapter().getItemCount();
         int nrMessage = recyclerView.getAdapter().getItemCount();
@@ -224,6 +227,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
 
     //ToDo JobSchedular
     public void sendText(View view) {
+
 
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
