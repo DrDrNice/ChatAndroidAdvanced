@@ -1,5 +1,8 @@
 package com.example.chatandroidadvanced.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
@@ -12,6 +15,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -19,19 +23,26 @@ import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.example.chatandroidadvanced.view.MainActivity.MY_PREFERENCES;
 import static org.junit.Assert.*;
 
 public class MainActivityUITest {
 
     //this test only works if no user is logged in.
-    //if user is logged in delete the app to run test successfull
+    //if user is logged in delete the app to run test successfull or delete shared preferences
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-    MainActivity mMainActivity;
+    private MainActivity mMainActivity;
+    private SharedPreferences preferences;
+    private Context mContext;
 
     @Before
     public void setUp() throws Exception {
+        mContext = InstrumentationRegistry.getTargetContext();
+        preferences = mContext.getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
+        preferences.edit().clear().apply();
+
         mMainActivity = activityTestRule.getActivity();
         Intents.init();
     }
