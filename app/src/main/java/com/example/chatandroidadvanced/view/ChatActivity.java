@@ -56,6 +56,7 @@ public class ChatActivity extends AppCompatActivity{
     private String mLastName;
     private String mEMail;
    private ImageView toolbarImage;
+    private String mConvID;
     //private Handler mHandler;
 
     private MessageViewModel mMessageViewModel;
@@ -87,9 +88,14 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 mLastName = conversation.getLastName();
                 mReceiverID = conversation.getReceiverId();
                 mEMail = conversation.getEmail();
+                mConvID = conversation.getId();
                 toolbar.setTitle(mFirstName + " " + mLastName);
+                Toast.makeText(getApplicationContext()," Conv OnCreate: "+ mConvID , Toast.LENGTH_LONG).show();
             } else {
+
                 Participant participant = (Participant) getIntent().getSerializableExtra("contact");
+                mConvID = getIntent().getStringExtra("Conversation");
+                Toast.makeText(getApplicationContext(),"OnCreate PArti: "+ mConvID , Toast.LENGTH_LONG).show();
                 mFirstName = participant.getfirstName();
                 mLastName = participant.getlastName();
                 mReceiverID = participant.getIDServer();
@@ -178,10 +184,11 @@ toolbarImage = findViewById(R.id.toolbarImage);
             Toast.makeText(getApplicationContext(),"Iemcount: "+ String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
             Message test = adapter.getMessageAtPosition(0);
             Toast.makeText(getApplicationContext(),"Adapter: "+test.getConversationId() , Toast.LENGTH_LONG).show();
-            addMessage(new Message(message, mReceiverID, mSenderId, test.getConversationId()));
+            addMessage(new Message(message, mReceiverID, mSenderId, mConvID));
             Log.d("Heurekainside", String.valueOf(test.getConversationId()));
-
-            Message mMessage = new Message(message, mReceiverID, mSenderId, String.valueOf(test.getConversationId()));
+            Toast.makeText(getApplicationContext(),"Send OnCreate1: "+ mConvID , Toast.LENGTH_LONG).show();
+            Message mMessage = new Message(message, mReceiverID, mSenderId,mConvID);
+            Toast.makeText(getApplicationContext(),"Send OnCreate2: "+ mConvID , Toast.LENGTH_LONG).show();
             MessageService messageService = retrofitInstance.getMessageService();
             Call<Message> callMessage = messageService.createMessage(mMessage);
             callMessage.enqueue(new Callback<Message>() {
@@ -215,6 +222,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
                         Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    mConvID=response.body().getId();
                     Toast.makeText(getApplicationContext(),"id: " + response.body().getId() , Toast.LENGTH_LONG).show();
                     Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
                     mConversationViewModel.insert(conversation);
