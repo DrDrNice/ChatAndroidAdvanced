@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
                     //start conversation activity
                     Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
-
                     startActivity(intentConversations);
                     finish();
                 }
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //gets the input from the user as participant
-    public Participant getUserInput() {
+    private Participant getUserInput() {
         //get text from textlabels and store
         String firstName = txtFristname.getText().toString();
         String lastName = txtLastname.getText().toString();
