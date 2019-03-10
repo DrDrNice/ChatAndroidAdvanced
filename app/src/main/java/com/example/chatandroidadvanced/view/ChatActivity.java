@@ -94,7 +94,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
             } else {
 
                 Participant participant = (Participant) getIntent().getSerializableExtra("contact");
-                mConvID = getIntent().getStringExtra("Conversation");
+               // mConvID = getIntent().getStringExtra("Conversation");
                 Toast.makeText(getApplicationContext(),"OnCreate PArti: "+ mConvID , Toast.LENGTH_LONG).show();
                 mFirstName = participant.getfirstName();
                 mLastName = participant.getlastName();
