@@ -44,17 +44,10 @@ import retrofit2.Response;
 
 public class ConversationActivity extends AppCompatActivity {
 
-    /* private RecyclerView recyclerView;
-     private ConversationListAdapter conversationListAdapter;
-     private LinkedList<Conversation> conversationList = new LinkedList<>();
- */
     private ParticipantViewModel mParticipantViewModel;
     private ConversationViewModel mConversationViewModel;
 
     private MessageViewModel mMessageViewModel;
-
-   // private ParticipantViewModel mParticipantViewModeltest;
-   // private RetrofitInstance retrofitInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,49 +55,23 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarConversations);
-      setSupportActionBar(toolbar);
-                // retrofitInstance = new RetrofitInstance();
+        setSupportActionBar(toolbar);
+
 
         JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
+        JobInfo job = new JobInfo.Builder(1, new ComponentName(this, NotificationJobService.class))
                 .setMinimumLatency(1000)
                 .build();
         scheduler.schedule(job);
-    /*-----------------------------
-        recyclerView = findViewById(R.id.rcvConversations);
-        conversationListAdapter = new ConversationListAdapter(this, conversationList);
-        recyclerView.setAdapter(conversationListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //Todo get list of conversations from server with get method should be done everytime this activity is started to get actual list
-        //conversationslist = get....;
-
-        //todo delete this example list
-        //only for testing self defined fix list.
-        int wordListSize = conversationList.size();
-
-       /* conversationList.addLast(new Conversation("jim rogers", "jim rogers", "bla bla bla", "3"));
-        conversationList.addLast(new Conversation("jim sanders", "jim sanders", "keine ahnung", "3"));*/
-
-    /*
-        recyclerView.getAdapter().notifyItemInserted(wordListSize);
-        recyclerView.smoothScrollToPosition(wordListSize);
---------------------------------- */
-
-        //allgemein machen
         RetrofitInstance retrofitInstance = new RetrofitInstance();
+
         mParticipantViewModel = ViewModelProviders.of(this).get(ParticipantViewModel.class);
-
         mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
-
-      //  mParticipantViewModeltest = ViewModelProviders.of(this).get(ParticipantViewModel.class);
-
-
-
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
-        retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
 
-        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel,"1");
+        retrofitInstance.getAllConversations(getApplicationContext(), mConversationViewModel);
+        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, "1");
 
         RecyclerView recyclerView = findViewById(R.id.rcvConversations);
         final ConversationListAdapter adapter = new ConversationListAdapter(this);
@@ -122,34 +89,6 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
 
-        ItemTouchHelper helper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0,
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(RecyclerView recyclerView,
-                                          RecyclerView.ViewHolder viewHolder,
-                                          RecyclerView.ViewHolder target) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
-                                         int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        Conversation myConversation = adapter.getConversationdAtPosition(position);
-                        Toast.makeText(ConversationActivity.this, "Deleting " +
-                                myConversation.getTopic(), Toast.LENGTH_LONG).show();
-
-                        // Delete participant from room
-                        mConversationViewModel.deleteConversation(myConversation);
-
-                        //delete participant from database
-                        RetrofitInstance retrofitInstance = new RetrofitInstance();
-                        retrofitInstance.deleteConversation(Integer.valueOf(myConversation.getId()));
-                    }
-                });
-
-        helper.attachToRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener(new ConversationListAdapter.ClickListener() {
 
@@ -158,53 +97,20 @@ public class ConversationActivity extends AppCompatActivity {
                 //start chat activity and put clicked participant as extra to chatactiviy
                 Conversation myConversation = adapter.getConversationdAtPosition(position);
 
-
-                //todo acitvate put extra to get it in next activity
                 Intent intentChat = new Intent(ConversationActivity.this, ChatActivity.class);
                 intentChat.putExtra("CODE", 1);
                 intentChat.putExtra("Conversation", myConversation);
-                //todo acitvate put extra to get it in next activity
-                //intentChat.putExtra(NEW_SELECTED_PARTICIPANT, myParticipent);
                 startActivity(intentChat);
             }
         });
     }
 
-
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_conversation, menu);
-        return true;
-    }*/
-
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.btnAddConversation) {
-            //load all users from db and add user which are not in room into to room
-            RetrofitInstance retrofitInstance = new RetrofitInstance();
-            retrofitInstance.getAllParticipants(getApplicationContext(), mParticipantViewModel);
-            Toast.makeText(getApplicationContext(), "Add new conversation!", Toast.LENGTH_LONG).show();
-            //create new conversation if button is clicked
-            Intent intentNewConversation = new Intent(this, AddConversationActivity.class);
-            startActivity(intentNewConversation);
-          //  finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
     public void addConversation(View view) {
-       // int id = item.getItemId();
-
-      //  if (id == R.id.btnAddConversation) {
-            //load all users from db and add user which are not in room into to room
-            RetrofitInstance retrofitInstance = new RetrofitInstance();
-            retrofitInstance.getAllParticipants(getApplicationContext(), mParticipantViewModel);
-            Toast.makeText(getApplicationContext(), "Add new conversation!", Toast.LENGTH_LONG).show();
-            //create new conversation if button is clicked
-            Intent intentNewConversation = new Intent(this, AddConversationActivity.class);
-            startActivity(intentNewConversation);
+        RetrofitInstance retrofitInstance = new RetrofitInstance();
+        retrofitInstance.getAllParticipants(getApplicationContext(), mParticipantViewModel);
+        Toast.makeText(getApplicationContext(), "Add new conversation!", Toast.LENGTH_LONG).show();
+        //create new conversation if button is clicked
+        Intent intentNewConversation = new Intent(this, AddConversationActivity.class);
+        startActivity(intentNewConversation);
     }
 }

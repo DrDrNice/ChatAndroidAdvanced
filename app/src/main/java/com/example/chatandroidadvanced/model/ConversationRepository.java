@@ -11,7 +11,7 @@ public class ConversationRepository {
 
     private ConversationDao mConversationDao;
     private LiveData<List<Conversation>> mAllConversations;
-private  List<Conversation> mAllConversationsList;
+
 
     public ConversationRepository(Application application) {
         ConversationRoomDatabase db = ConversationRoomDatabase.getDatabase(application);
@@ -26,7 +26,7 @@ private  List<Conversation> mAllConversationsList;
 
     public List<Conversation> getmAllConversationsList() {
         try {
-            return  new ConversationRepository.getAsyncTask(mConversationDao).execute().get();
+            return new ConversationRepository.getAsyncTask(mConversationDao).execute().get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -48,27 +48,25 @@ private  List<Conversation> mAllConversationsList;
         new ConversationRepository.deleteConversationAsyncTask(mConversationDao).execute(conversation);
     }
 
-    public void update(Conversation conversation)  {
+    public void update(Conversation conversation) {
         new ConversationRepository.updateConversationAsyncTask(mConversationDao).execute(conversation);
     }
 
 
-
-    private static class getAsyncTask extends AsyncTask<Void,Void,List<Conversation>>{
+    private static class getAsyncTask extends AsyncTask<Void, Void, List<Conversation>> {
 
         private ConversationDao mAsyncTaskDao;
 
-        getAsyncTask(ConversationDao dao) {mAsyncTaskDao = dao;}
-
+        getAsyncTask(ConversationDao dao) {
+            mAsyncTaskDao = dao;
+        }
 
 
         @Override
         protected List<Conversation> doInBackground(Void... voids) {
 
             return mAsyncTaskDao.getAllConversationsList();
-
         }
-
     }
 
 
@@ -116,7 +114,6 @@ private  List<Conversation> mAllConversationsList;
             return null;
         }
     }
-
 
 
     private static class updateConversationAsyncTask extends AsyncTask<Conversation, Void, Void> {

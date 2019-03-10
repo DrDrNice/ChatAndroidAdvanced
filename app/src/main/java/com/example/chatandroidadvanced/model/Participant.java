@@ -13,12 +13,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-//todo warum geht duplikate vermeiden nur mit firstName -> besser wäre email aber da geht es nicht
+
 @Entity(tableName = "participant_table", indices = {@Index(value = {"Id"}, unique = true)})
 public class Participant implements Serializable {
-
-
-    //todo fields createdBy, avatar usw können nicht initialisiert werden bzw ohne @ignore funktioniert es nicht
 
     @SerializedName("idRoom")
     @Expose
@@ -71,7 +68,6 @@ public class Participant implements Serializable {
     public String mlastName;
 
     public Participant(){
-
     }
 
     public Participant(@NonNull String id,@NonNull String email, @NonNull String firstName, @NonNull String lastName) {

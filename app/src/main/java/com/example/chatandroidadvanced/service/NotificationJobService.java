@@ -73,83 +73,66 @@ public class NotificationJobService extends JobService {
             @Override
             public void onChanged(@Nullable List<Message> messages) {
 
-                Log.d("OnChangedLiveData", "REC ID: " + mReciverId);
-                //   Log.d("OnchangedLiveData", messages.get(0).getContent() + " ---Size: " + messages.size());  //sets the adapter to the recyclerview and keeps all updated
-                Log.d("OnChangedLiveData", "JOBChangedLiveData");
                 final int size = messages.size();
                 final List<Message> rommMessages = messages;
-
-                //--------- FETCH SERVER for saved messages ToDO use ReciverID
+                //--------- FETCH SERVER for saved messages
                 MessageService mMessageService = retrofitInstance.getMessageService();
-                Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(Integer.valueOf(mReciverId),0,1000);
+                Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(Integer.valueOf(mReciverId), 0, 1000);
                 call.enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
                         if (!response.isSuccessful()) {
                             return;
                         }
-
                         final List<Message> posts = response.body();
-
-                        for(int i = 0; i< posts.size(); i++){
-                           Log.d("foop", posts.get(i).getContent());
+                        for (int i = 0; i < posts.size(); i++) {
                         }
-                        Log.d("OnChangedLiveData", "------SIZE:" + String.valueOf(posts.size()) + " / RoomSize: " + size);
-
-                        //Server size passt nicht mit Room size.
                         if (posts.size() > size) {
                             int sizeMin = Math.min(posts.size(), size);
                             int sizeMax = Math.max(posts.size(), size);
                             for (int i = sizeMin; i < sizeMax; i++) {
-                                // if(!posts.get(i).getId().equals(rommMessages.get(i).getId())){
+
+                                //Send Notification
                                 createNotificationChannel();
-                              //  if (posts.get(i).getReceiverId().equals(mReciverId)) {
-                                    createPending();
-                                    mMessageViewModel.insert(posts.get(i));
-                                    final Message messageTemp = posts.get(i);
-                                    final ConversationViewModel mConversationViewModel = new ConversationViewModel(getApplication());
+                                createPending();
 
-                                    //Fetch Conversation Room
-                                    mConversationViewModel.getAllConversations().observeForever(new Observer<List<Conversation>>() {
-                                        @Override
-                                        public void onChanged(@Nullable List<Conversation> conversations) {
+                                mMessageViewModel.insert(posts.get(i));
+                                final Message messageTemp = posts.get(i);
+                                final ConversationViewModel mConversationViewModel = new ConversationViewModel(getApplication());
 
-                                            int counterTemp = 0;
-                                            for (final Conversation conv : conversations) {
-                                                Log.d("foo", "------CONVI:");
-                                                Log.d("foo", "convID " + conv.getId() + " / " + messageTemp.getConversationId());
-                                                if (!conv.getId().equals(messageTemp.getConversationId())) {
-                                                    //  (String topic, String id , String senderId, String receiverId, String email, String content , String firstName , String lastName) {
-                                                    Log.d("foo", "------CONVI222:");
-                                                    counterTemp++;
+                                //Fetch Conversation Room
+                                mConversationViewModel.getAllConversations().observeForever(new Observer<List<Conversation>>() {
+                                    @Override
+                                    public void onChanged(@Nullable List<Conversation> conversations) {
+                                        int counterTemp = 0;
+                                        for (final Conversation conv : conversations) {
+                                            if (!conv.getId().equals(messageTemp.getConversationId())) {
+                                                counterTemp++;
+                                            }
+                                        }
+                                        if (counterTemp == conversations.size()) {
+                                            //Fetch from Server information about sender of the message
+                                            ParticipantService participantService = retrofitInstance.getParticipantService();
+                                            Call<Participant> call = participantService.getParticipant(Integer.valueOf(messageTemp.getSenderId()));
+                                            call.enqueue(new Callback<Participant>() {
+
+                                                @Override
+                                                public void onResponse(Call<Participant> call, Response<Participant> response) {
+                                                    Participant p = response.body();
+                                                    mConversationViewModel.insert(new Conversation(messageTemp.getContent()
+                                                            , messageTemp.getConversationId(), messageTemp.getReceiverId()
+                                                            , messageTemp.getSenderId(), p.getEmail(), messageTemp.getContent(), p.getfirstName(), p.getlastName()));
                                                 }
-                                            }
-                                            if (counterTemp == conversations.size()) {
-                                                //Fetch from Server information about sender of the message
-                                                ParticipantService participantService = retrofitInstance.getParticipantService();
-                                                Call<Participant> call = participantService.getParticipant(Integer.valueOf(messageTemp.getSenderId()));
-                                                call.enqueue(new Callback<Participant>() {
 
-                                                    @Override
-                                                    public void onResponse(Call<Participant> call, Response<Participant> response) {
-                                                        Participant p = response.body();
-                                                        Log.d("foo", p.getfirstName());
-                                                        mConversationViewModel.insert(new Conversation(messageTemp.getContent()
-                                                                , messageTemp.getConversationId(), messageTemp.getReceiverId()
-                                                                , messageTemp.getSenderId(), p.getEmail(), messageTemp.getContent(), p.getfirstName(), p.getlastName()));
-                                                    }
+                                                @Override
+                                                public void onFailure(Call<Participant> call, Throwable t) {
 
-                                                    @Override
-                                                    public void onFailure(Call<Participant> call, Throwable t) {
+                                                }
+                                            });
+                                        }
+                                    }
 
-                                                    }
-                                                });
-                                                //}
-                                            }
-                                            }
-
-                                    });
-                               //if ob reciver id ich bin }
+                                });
                             }
                         }
 
@@ -161,75 +144,8 @@ public class NotificationJobService extends JobService {
                         Log.d("get Message failed", t.toString());
                     }
                 });
-
-
-                //-----------------
             }
         });
-
-
-       /*  final MessageService messageService = retrofitInstance.getMessageService();
-
-        final Call<Integer> callMessage = messageService.countMessages();
-        callMessage.enqueue(new Callback<Integer>() {
-            @Override
-            public void onResponse(Call<Integer> callMessage, Response<Integer> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-              final Message mMessage = new Message("Hello World", "196", "198","337");
-                MessageService messageService = retrofitInstance.getMessageService();
-                final Call<Message> message = messageService.createMessage(mMessage);
-                message.enqueue(new Callback<Message>() {
-                    @Override
-                    public void onResponse(Call<Message> call, Response<Message> response) {
-                        if (!response.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Message> call, Throwable t) {
-                    }
-                });
-
-
-                Toast.makeText(getApplicationContext(),"Succes",Toast.LENGTH_LONG).show();
-                Log.d("foom", response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),"Fail",Toast.LENGTH_LONG).show();
-                Log.d("foom", t.toString());
-            }
-        });
-*/
-
-
-       /* createNotificationChannel();
-        PendingIntent contentPendingIntent = PendingIntent.getActivity(this,
-                0, new Intent(this, ConversationActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
-                .setContentTitle("Android Chat App")
-                .setContentText("New Message")
-                .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.ic_autorenew_black_24dp)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setAutoCancel(true);
-
-        mNotifyManager.notify(0, builder.build());*/
-
-
         stopSelf();
         return false;
     }
@@ -245,7 +161,6 @@ public class NotificationJobService extends JobService {
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             NotificationChannel notificationChannel = new NotificationChannel(PRIMARY_CHANNEL_ID,
                     "Job Service notification",
                     NotificationManager.IMPORTANCE_HIGH);
@@ -265,7 +180,6 @@ public class NotificationJobService extends JobService {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(this,
                 0, new Intent(this, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("Android Chat App")
                 .setContentText("New Message")
@@ -277,11 +191,5 @@ public class NotificationJobService extends JobService {
 
         mNotifyManager.notify(0, builder.build());
 
-    }
-
-    private void broadcastNotification(Context context) {
-        Intent intent = new Intent("NOTIFICATION");
-        intent.putExtra("MESSAGE", "your_message");
-        context.sendBroadcast(intent);
     }
 }

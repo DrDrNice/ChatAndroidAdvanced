@@ -1,13 +1,9 @@
 package com.example.chatandroidadvanced.viewmodel;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.Telephony;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.chatandroidadvanced.model.Conversation;
 import com.example.chatandroidadvanced.model.ConversationService;
@@ -15,10 +11,8 @@ import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.MessageService;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
-import com.example.chatandroidadvanced.view.ConversationActivity;
 import com.example.chatandroidadvanced.view.MainActivity;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,12 +30,10 @@ public class RetrofitInstance {
     private final ConversationService mConversationService;
     private final MessageService mMessageService;
 
-   /* private final MessageService messageService;
-    private final ConversationService conversationService;*/
 
     public RetrofitInstance() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(" http://10.0.0.16:8080/")
+                .baseUrl(" http://192.168.0.220:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -53,14 +45,6 @@ public class RetrofitInstance {
     public ParticipantService getParticipantService() {
         return participantService;
     }
-
-  /*  public MessageService getMessageService() {
-        return messageService;
-    }
-
-    public ConversationService getConversationService() {
-        return conversationService;
-    }*/
 
     //delete user from db
     public void deleteParticipant(Integer participantId) {
@@ -128,8 +112,6 @@ public class RetrofitInstance {
         });
     }
 
-//-------------------------------------
-
     public void getAllParticipants(final Context context, final ParticipantViewModel mParticipantViewModel) {
         Call<List<Participant>> call = participantService.getAllParticipants();
         call.enqueue(new Callback<List<Participant>>() {
@@ -140,7 +122,6 @@ public class RetrofitInstance {
                     return;
                 }
 
-                //todo is there a better solution than to add every element from online service each time?
                 SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);
                 List<Participant> posts = response.body();
                 for (Participant participant : posts) {
@@ -168,15 +149,9 @@ public class RetrofitInstance {
                     return;
                 }
 
-            /*    //todo is there a better solution than to add every element from online service each time?
-                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
-
                 List<Conversation> posts = response.body();
                 for (Conversation conversation : posts) {
-                    //only insert element in room from db if it is not the current user
-                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
-                        mConversationViewModel.insert(conversation);
-                   // }
+                    mConversationViewModel.insert(conversation);
                 }
             }
 
@@ -223,9 +198,8 @@ public class RetrofitInstance {
         });
     }
 
-//----------------------Nacher
     public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId, final String convId) {
-        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId,0,1000);
+        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId, 0, 1000);
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -234,16 +208,10 @@ public class RetrofitInstance {
                     return;
                 }
 
-            /*    //todo is there a better solution than to add every element from online service each time?
-                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
-
                 List<Message> posts = response.body();
                 for (Message message : posts) {
-                    if(convId.equals(message.getConversationId()))
-                    //only insert element in room from db if it is not the current user
-                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
-                    mMessageViewModel.insert(message);
-                    // }
+                    if (convId.equals(message.getConversationId()))
+                        mMessageViewModel.insert(message);
                 }
             }
 
@@ -255,8 +223,8 @@ public class RetrofitInstance {
     }
 
 
-    public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel,final String recId  ) {
-        Call<List<Message>> call = mMessageService.getAllMessages(0,1000);
+    public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel, final String recId) {
+        Call<List<Message>> call = mMessageService.getAllMessages(0, 1000);
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -265,58 +233,12 @@ public class RetrofitInstance {
                     return;
                 }
 
-            /*    //todo is there a better solution than to add every element from online service each time?
-                SharedPreferences preferences = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE);*/
-
                 List<Message> posts = response.body();
                 for (final Message message : posts) {
-                    //only insert element in room from db if it is not the current user
-                    //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
-                if( mMessageViewModel.insert(message) != -1) {
-                    if(message.getReceiverId().equals(recId) || message.getSenderId().equals(recId) ) {
-                        Log.d("Retro Test", String.valueOf(mMessageViewModel.insert(message)) + "Heuraka");
-                    List<Conversation> conversations = mConversationViewModel.getAllConversationsList();
-                    boolean inside = false;
-                    if(conversations != null){
-
-                   /*     for (Conversation conv : conversations) {
-                            Log.d("Retro Test 2" , conv.getLastName());
-                            if(conv.getSenderId().equals(message.getSenderId())){
-                                inside = true;
-                            }
-                        }
-                        if (!inside){
-
-                            ConversationService conversationService = getConversationService();
-                            Call<Conversation> callConv = conversationService.createConversation(new Conversation(message.getContent(), ""));
-                            callConv.enqueue(new Callback<Conversation>() {
-                                @Override
-                                public void onResponse(Call<Conversation> call, Response<Conversation> response) {
-                                    if (!response.isSuccessful()) {
-                                     //   Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-
-                                    Conversation conversation = new Conversation(message.getContent(), response.body().getId(), message.getSenderId(), message.getReceiverId(), "Mail", "content","mFirstName", "mLastName");
-                                    mConversationViewModel.insert(conversation);
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<Conversation> call, Throwable t) {
-                                    Log.d("foofail", t.toString());
-                                  //  Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                            //only insert element in room from db if it is not the current user
-                            //if (!preferences.getString(MainActivity.ID, "").
-*/
-                    }
-                }}
-                    // }
+                    mMessageViewModel.insert(message);
                 }
             }
+
 
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {

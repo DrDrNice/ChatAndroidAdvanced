@@ -3,11 +3,9 @@ package com.example.chatandroidadvanced.view;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -44,7 +40,7 @@ import retrofit2.Response;
 
 import static com.example.chatandroidadvanced.view.MainActivity.MY_PREFERENCES;
 
-public class ChatActivity extends AppCompatActivity{
+public class ChatActivity extends AppCompatActivity {
 
 
     private EditText inputText;
@@ -55,9 +51,8 @@ public class ChatActivity extends AppCompatActivity{
     private String mFirstName;
     private String mLastName;
     private String mEMail;
-   private ImageView toolbarImage;
+    private ImageView toolbarImage;
     private String mConvID;
-    //private Handler mHandler;
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
@@ -73,9 +68,9 @@ public class ChatActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        
 
-toolbarImage = findViewById(R.id.toolbarImage);
+
+        toolbarImage = findViewById(R.id.toolbarImage);
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
         mSenderId = preferences.getString(MainActivity.ID, "");
 
@@ -90,12 +85,9 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 mEMail = conversation.getEmail();
                 mConvID = conversation.getId();
                 toolbar.setTitle(mFirstName + " " + mLastName);
-                Toast.makeText(getApplicationContext()," Conv OnCreate: "+ mConvID , Toast.LENGTH_LONG).show();
             } else {
 
                 Participant participant = (Participant) getIntent().getSerializableExtra("contact");
-               // mConvID = getIntent().getStringExtra("Conversation");
-                Toast.makeText(getApplicationContext(),"OnCreate PArti: "+ mConvID , Toast.LENGTH_LONG).show();
                 mFirstName = participant.getfirstName();
                 mLastName = participant.getlastName();
                 mReceiverID = participant.getIDServer();
@@ -111,14 +103,13 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 .placeholder(R.drawable.ic_loading_image)
                 .error(R.drawable.ic_loading_error)
                 .into(toolbarImage);
+
         inputText = (EditText) findViewById(R.id.chatInputText);
         recyclerView = (RecyclerView) findViewById(R.id.rcvChat);
 
         adapter = new MessageListAdapter(this, preferences);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
 
         mMessageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
         mConversationViewModel = ViewModelProviders.of(this).get(ConversationViewModel.class);
@@ -133,128 +124,96 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 adapter.setmMessages(messages);
                 retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
 
-               recyclerView.smoothScrollToPosition(adapter.getItemCount());
+                recyclerView.smoothScrollToPosition(adapter.getItemCount());
 
             }
         });
-
-/*
-        //Checks Network state
-        final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            Toast.makeText(this,"NetworkConnect", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
-        }
-*/
-        /* this.mHandler = new Handler();
-        mRunnable.run();*/
     }
 
-
-
-
-
-    //ToDo JobSchedular
     public void sendText(View view) {
 
         final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+
         if (activeNetwork != null && activeNetwork.isConnected()) {
 
+            //Hide Keyboard
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            final String message = inputText.getText().toString();
+            final Conversation mConversation = new Conversation("er", "");
 
-        final String message = inputText.getText().toString();
-        final Conversation  mConversation = new Conversation("er", "");
+            inputText.setText("");
+            final RetrofitInstance retrofitInstance = new RetrofitInstance();
 
+            retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
 
-        inputText.setText("");
-        final RetrofitInstance retrofitInstance = new RetrofitInstance();
+            if (recyclerView.getAdapter().getItemCount() > 0) {
 
-        int nrMessages = recyclerView.getAdapter().getItemCount()+1;
-        Log.d("Heureka",String.valueOf(nrMessages));
+                Message test = adapter.getMessageAtPosition(0);
+                addMessage(new Message(message, mReceiverID, mSenderId, mConvID));
 
+                Message mMessage = new Message(message, mReceiverID, mSenderId, mConvID);
 
-        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
+                MessageService messageService = retrofitInstance.getMessageService();
+                Call<Message> callMessage = messageService.createMessage(mMessage);
+                callMessage.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {//ToDO response to list
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
+                            return;
 
-        if(recyclerView.getAdapter().getItemCount() > 0 ) {
-            Toast.makeText(getApplicationContext(),"Iemcount: "+ String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
-            Message test = adapter.getMessageAtPosition(0);
-            Toast.makeText(getApplicationContext(),"Adapter: "+test.getConversationId() , Toast.LENGTH_LONG).show();
-            addMessage(new Message(message, mReceiverID, mSenderId, mConvID));
-            Log.d("Heurekainside", String.valueOf(test.getConversationId()));
-            Toast.makeText(getApplicationContext(),"Send OnCreate1: "+ mConvID , Toast.LENGTH_LONG).show();
-            Message mMessage = new Message(message, mReceiverID, mSenderId,mConvID);
-            Toast.makeText(getApplicationContext(),"Send OnCreate2: "+ mConvID , Toast.LENGTH_LONG).show();
-            MessageService messageService = retrofitInstance.getMessageService();
-            Call<Message> callMessage = messageService.createMessage(mMessage);
-            callMessage.enqueue(new Callback<Message>() {
-                @Override
-                public void onResponse(Call<Message> call, Response<Message> response) {//ToDO response to list
-                    if (!response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                        return;
-
+                        }
                     }
 
-                   // adapter.addMessage(response.body());
-                   Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_LONG).show();
-
-                }
-
-                @Override
-                public void onFailure(Call<Message> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
-                }
-            });
-
-        }else {
-            addMessage(new Message(message, mReceiverID, mSenderId, ""));
-            ConversationService conversationService = retrofitInstance.getConversationService();
-            Call<Conversation> call = conversationService.createConversation(mConversation);
-            call.enqueue(new Callback<Conversation>() {
-                @Override
-                public void onResponse(Call<Conversation> call, Response<Conversation> response) {
-                    if (!response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                        return;
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "Network Connection Error", Toast.LENGTH_SHORT).show();
                     }
-                    mConvID=response.body().getId();
-                    Toast.makeText(getApplicationContext(),"id: " + response.body().getId() , Toast.LENGTH_LONG).show();
-                    Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
-                    mConversationViewModel.insert(conversation);
+                });
 
-                    Message mMessage = new Message(message, mReceiverID, mSenderId, response.body().getId());
-                    MessageService messageService = retrofitInstance.getMessageService();
-                    Call<Message> callMessage = messageService.createMessage(mMessage);
-                    callMessage.enqueue(new Callback<Message>() {
-                        @Override
-                        public void onResponse(Call<Message> call, Response<Message> response) {
-                            if (!response.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                                return;
+            } else {
+                addMessage(new Message(message, mReceiverID, mSenderId, ""));
+                ConversationService conversationService = retrofitInstance.getConversationService();
+                Call<Conversation> call = conversationService.createConversation(mConversation);
+                call.enqueue(new Callback<Conversation>() {
+                    @Override
+                    public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                        if (!response.isSuccessful()) {
+                            return;
+                        }
+                        mConvID = response.body().getId();
+                        Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
+                        mConversationViewModel.insert(conversation);
+
+                        Message mMessage = new Message(message, mReceiverID, mSenderId, response.body().getId());
+                        MessageService messageService = retrofitInstance.getMessageService();
+                        Call<Message> callMessage = messageService.createMessage(mMessage);
+                        callMessage.enqueue(new Callback<Message>() {
+                            @Override
+                            public void onResponse(Call<Message> call, Response<Message> response) {
+                                if (!response.isSuccessful()) {
+                                    return;
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<Message> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
+                            @Override
+                            public void onFailure(Call<Message> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), "Network Connection Error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
-                @Override
-                public void onFailure(Call<Conversation> call, Throwable t) {
-                    Log.d("foofail", t.toString());
-                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+                    @Override
+                    public void onFailure(Call<Conversation> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "Network Connection Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
-            Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Network Disconnect", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -262,14 +221,4 @@ toolbarImage = findViewById(R.id.toolbarImage);
         adapter.addMessage(message);
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
-
-    /*private final Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            ChatActivity.this.mHandler.postDelayed(mRunnable, 1000);
-            RetrofitInstance retrofitInstance = new RetrofitInstance();
-            retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
-        }
-    };*/
-
 }

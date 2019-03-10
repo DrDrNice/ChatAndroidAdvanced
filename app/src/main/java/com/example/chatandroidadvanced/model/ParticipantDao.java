@@ -14,8 +14,6 @@ import java.util.List;
 @Dao
 public interface ParticipantDao {
 
-
-    //standard -> ignore
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert (Participant participant);
 

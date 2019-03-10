@@ -76,24 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
         //using shared preferences to load logged in user
         preferences = getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
-        
-        //todo delete this test parameters
-        //Log.d("preference name", preferences.getString(FIRSTNAME, ""));
-        //Log.d("preference name", preferences.getString(LASTNAME, ""));
-        //Log.d("preference name", preferences.getString(ID, ""));
 
-        //todo delete shared preferences if new user should be logged in
-      //   preferences.edit().clear().apply();
 
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
         if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
             //start conversation activity
-       /*     JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
-                    .setMinimumLatency(1000)
-                    .build();
-            scheduler.schedule(job);*/
-            
+
             Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
             startActivity(intentConversations);
             finish();

@@ -12,17 +12,11 @@ public class MessageRepository {
 
     private MessageDao mMessageDao;
     private LiveData<List<Message>> mAllMessages;
-    private Message[] mAllMessTest;
-
-
 
     public MessageRepository(Application application) {
         MessageRoomDatabase db = MessageRoomDatabase.getDatabase(application);
         mMessageDao = db.messageDao();
         mAllMessages = mMessageDao.getAllMessage();
-
-        //mAllMessTest = mMessageDao.getAllMessageTest();
-
     }
 
     public LiveData<List<Message>> getmAllMessages() {
@@ -39,12 +33,12 @@ public class MessageRepository {
     }
 
     public LiveData<List<Message>> getAllMessagesRecSendID(int recID, int sendID) {
-        return mMessageDao.getAllMessagebyReciverSendId(recID,sendID);
+        return mMessageDao.getAllMessagebyReciverSendId(recID, sendID);
     }
 
     public long insert(Message message) {
         try {
-            return  new insertAsyncTask(mMessageDao).execute(message).get();
+            return new insertAsyncTask(mMessageDao).execute(message).get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -62,20 +56,20 @@ public class MessageRepository {
         new MessageRepository.deleteMessageAsyncTask(mMessageDao).execute(message);
     }
 
-    public void update(Message message)  {
+    public void update(Message message) {
         new MessageRepository.updateMessageAsyncTask(mMessageDao).execute(message);
     }
 
-public List<Message> getMessageFirst(int recId){
-    try {
-        return  new getMessageFirstAsyncTask(mMessageDao).execute(recId).get();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
-    } catch (InterruptedException e) {
-        e.printStackTrace();
+    public List<Message> getMessageFirst(int recId) {
+        try {
+            return new getMessageFirstAsyncTask(mMessageDao).execute(recId).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    return null;
-}
 
     private static class insertAsyncTask extends AsyncTask<Message, Void, Long> {
 
@@ -87,28 +81,27 @@ public List<Message> getMessageFirst(int recId){
 
         @Override
         protected Long doInBackground(final Message... params) {
-          return  mAsyncTaskDao.insert(params[0]);
-          //  return null;
+            return mAsyncTaskDao.insert(params[0]);
+            //  return null;
         }
     }
 
 
+    private static class getMessageFirstAsyncTask extends AsyncTask<Integer, Void, List<Message>> {
 
-  private static class  getMessageFirstAsyncTask extends AsyncTask<Integer,Void,List<Message>>{
+        private MessageDao mAsyncTaskDao;
 
-      private MessageDao mAsyncTaskDao;
+        getMessageFirstAsyncTask(MessageDao dao) {
+            mAsyncTaskDao = dao;
+        }
 
-      getMessageFirstAsyncTask(MessageDao dao) {
-          mAsyncTaskDao = dao;
-      }
+        @Override
+        protected List<Message> doInBackground(Integer... ints) {
 
-      @Override
-      protected List<Message> doInBackground(Integer... ints) {
+            return mAsyncTaskDao.getMessageFirst(ints[0]);
 
-          return mAsyncTaskDao.getMessageFirst(ints[0]);
-
-      }
-  }
+        }
+    }
 
     private static class deleteAllMessageAsyncTask extends AsyncTask<Void, Void, Void> {
         private MessageDao mAsyncTaskDao;
@@ -137,7 +130,6 @@ public List<Message> getMessageFirst(int recId){
             return null;
         }
     }
-
 
 
     private static class updateMessageAsyncTask extends AsyncTask<Message, Void, Void> {
