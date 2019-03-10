@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -54,7 +56,7 @@ public class ChatActivity extends AppCompatActivity{
     private String mLastName;
     private String mEMail;
    private ImageView toolbarImage;
-    private Handler mHandler;
+    //private Handler mHandler;
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
@@ -130,62 +132,6 @@ toolbarImage = findViewById(R.id.toolbarImage);
             }
         });
 
-
-     /*   ItemTouchHelper helper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0,
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(RecyclerView recyclerView,
-                                          RecyclerView.ViewHolder viewHolder,
-                                          RecyclerView.ViewHolder target) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
-                                         int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        Message myMessage = adapter.getMessageAtPosition(position);
-                        Toast.makeText(ChatActivity.this, "Deleting " +
-                                myMessage.getContent(), Toast.LENGTH_LONG).show();
-
-                        // Delete participant from room
-                        mMessageViewModel.deleteMessage(myMessage);
-
-                        //delete participant from database
-                        RetrofitInstance retrofitInstance = new RetrofitInstance();
-                        retrofitInstance.deleteMessage(Integer.valueOf(myMessage.getId()));
-                    }
-                });
-
-        helper.attachToRecyclerView(recyclerView);
-
-
-    /*   RetrofitInstance retrofitInstance = new RetrofitInstance();
-        MessageService messageService = retrofitInstance.getMessageService();
-        final Call<List<Message>> callMessage = messageService.getAllMessages();
-        callMessage.enqueue(new Callback<List<Message>>() {
-            @Override
-            public void onResponse(Call<List<Message>> callMessage, Response<List<Message>> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Toast.makeText(getApplicationContext(),"Succes",Toast.LENGTH_LONG).show();
-                Log.d("foom", response.body().toString());
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),"Fail",Toast.LENGTH_LONG).show();
-                Log.d("foom", t.toString());
-            }
-        });
-
-*/
-
-
 /*
         //Checks Network state
         final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -196,39 +142,20 @@ toolbarImage = findViewById(R.id.toolbarImage);
             Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
         }
 */
-       /* this.mHandler = new Handler();
+        /* this.mHandler = new Handler();
         mRunnable.run();*/
-       /* recyclerView.getAdapter().notifyDataSetChanged();
-        int nrMessages = recyclerView.getAdapter().getItemCount();
-        int nrMessage = recyclerView.getAdapter().getItemCount();
-        Log.d("Heureka",String.valueOf(nrMessages) + " " + String.valueOf(nrMessage));
-        recyclerView.smoothScrollToPosition(adapter.getItemCount() );*/
-
-
     }
 
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_chat, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == R.id.btnBackToConversations) {
-            Toast.makeText(getApplicationContext(), "Back to conversations!", Toast.LENGTH_LONG).show();
-            Intent intentConversations = new Intent(this, ConversationActivity.class);
-            startActivity(intentConversations);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     //ToDo JobSchedular
     public void sendText(View view) {
+
+        final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
 
 
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -318,6 +245,9 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 }
             });
         }
+        } else {
+            Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addMessage(Message message) {
@@ -325,13 +255,13 @@ toolbarImage = findViewById(R.id.toolbarImage);
         recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
     }
 
-    private final Runnable mRunnable = new Runnable() {
+    /*private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             ChatActivity.this.mHandler.postDelayed(mRunnable, 1000);
             RetrofitInstance retrofitInstance = new RetrofitInstance();
             retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
         }
-    };
+    };*/
 
 }
