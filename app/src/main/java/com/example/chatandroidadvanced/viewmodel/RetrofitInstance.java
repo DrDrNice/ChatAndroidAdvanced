@@ -33,7 +33,7 @@ public class RetrofitInstance {
 
     public RetrofitInstance() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(" http://192.168.0.220:8080/")
+                .baseUrl("http://10.0.0.16:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -42,74 +42,14 @@ public class RetrofitInstance {
         mMessageService = retrofit.create(MessageService.class);
     }
 
-    public ParticipantService getParticipantService() {
-        return participantService;
+    public ParticipantService getParticipantService() { return participantService; }
+
+    public ConversationService getConversationService() {
+        return mConversationService;
     }
 
-    //delete user from db
-    public void deleteParticipant(Integer participantId) {
-        Call<Participant> call = participantService.deleteParticipant(participantId);
-        call.enqueue(new Callback<Participant>() {
-            @Override
-            public void onResponse(Call<Participant> call, Response<Participant> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("delete participant not successfull", String.valueOf(response.code()));
-                    return;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Participant> call, Throwable t) {
-                Log.d("delete participant not successfull", t.toString());
-            }
-        });
-    }
-
-    /*public Participant createParticipantSynchron(Participant participant){
-        Call<Participant> call = participantService.createParticipant(participant);
-
-        try {
-            Response<Participant> response = call.execute();
-            if(response.isSuccessful()){
-                Log.d("create participant synchron success", response.body().getfirstName());
-                return response.body();
-            } else {
-                Log.d("create participant synchron no success", "");
-            }
-        } catch (IOException e) {
-            Log.d("create participant synchron no success", "");
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
-    public void createParticipant(Participant participant, final Context context, final boolean createSharedPreference) {
-        Call<Participant> call = participantService.createParticipant(participant);
-        call.enqueue(new Callback<Participant>() {
-            @Override
-            public void onResponse(Call<Participant> call, Response<Participant> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("create participant not successfull", String.valueOf(response.code()));
-                    return;
-                }
-
-                //save current user data in shared preferences if true
-                if (createSharedPreference) {
-                    SharedPreferences.Editor sharedEditor = context.getSharedPreferences(MainActivity.MY_PREFERENCES, MODE_PRIVATE).edit();
-                    sharedEditor.putString(MainActivity.FIRSTNAME, response.body().mfirstName);
-                    sharedEditor.putString(MainActivity.LASTNAME, response.body().mlastName);
-                    sharedEditor.putString(MainActivity.EMAIL, response.body().mEmail);
-                    sharedEditor.putString(MainActivity.ID, response.body().getIDServer());
-                    sharedEditor.apply();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Participant> call, Throwable t) {
-                Log.d("create participant not successfull", t.toString());
-                //Toast.makeText(getApplicationContext() ,"Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
-            }
-        });
+    public MessageService getMessageService() {
+        return mMessageService;
     }
 
     public void getAllParticipants(final Context context, final ParticipantViewModel mParticipantViewModel) {
@@ -162,67 +102,6 @@ public class RetrofitInstance {
         });
     }
 
-    public void deleteConversation(Integer conversationId) {
-        Call<Conversation> call = mConversationService.deleteConversation(conversationId);
-        call.enqueue(new Callback<Conversation>() {
-            @Override
-            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("delete participant not successfull", String.valueOf(response.code()));
-                    return;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Conversation> call, Throwable t) {
-                Log.d("delete participant not successfull", t.toString());
-            }
-        });
-    }
-
-    public void deleteMessage(Integer conversationId) {
-        Call<Message> call = mMessageService.deleteMessage(conversationId);
-        call.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("delete participant not successfull", String.valueOf(response.code()));
-                    return;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                Log.d("delete participant not successfull", t.toString());
-            }
-        });
-    }
-
-    public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId, final String convId) {
-        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId, 0, 1000);
-        call.enqueue(new Callback<List<Message>>() {
-            @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("get participants not successfull", String.valueOf(response.code()));
-                    return;
-                }
-
-                List<Message> posts = response.body();
-                for (Message message : posts) {
-                    if (convId.equals(message.getConversationId()))
-                        mMessageViewModel.insert(message);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
-                Log.d("get Message failed", t.toString());
-            }
-        });
-    }
-
-
     public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel, final String recId) {
         Call<List<Message>> call = mMessageService.getAllMessages(0, 1000);
         call.enqueue(new Callback<List<Message>>() {
@@ -239,21 +118,10 @@ public class RetrofitInstance {
                 }
             }
 
-
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
                 Log.d("get Message failed", t.toString());
             }
         });
     }
-
-
-    public ConversationService getConversationService() {
-        return mConversationService;
-    }
-
-    public MessageService getMessageService() {
-        return mMessageService;
-    }
-
 }
