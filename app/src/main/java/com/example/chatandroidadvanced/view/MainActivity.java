@@ -88,11 +88,11 @@ public class MainActivity extends AppCompatActivity {
         //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
         if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
             //start conversation activity
-            JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+       /*     JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
             JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
                     .setMinimumLatency(1000)
                     .build();
-            scheduler.schedule(job);
+            scheduler.schedule(job);*/
             
             Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
             startActivity(intentConversations);
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //start conversation activity
                     Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
+
                     startActivity(intentConversations);
                     finish();
                 }

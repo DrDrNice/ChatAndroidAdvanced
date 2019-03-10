@@ -81,7 +81,7 @@ public class NotificationJobService extends JobService {
 
                 //--------- FETCH SERVER for saved messages ToDO use ReciverID
                 MessageService mMessageService = retrofitInstance.getMessageService();
-                Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(Integer.valueOf(mReciverId));
+                Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(Integer.valueOf(mReciverId),0,1000);
                 call.enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {

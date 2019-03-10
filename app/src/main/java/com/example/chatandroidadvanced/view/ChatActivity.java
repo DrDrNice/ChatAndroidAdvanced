@@ -44,7 +44,7 @@ import static com.example.chatandroidadvanced.view.MainActivity.MY_PREFERENCES;
 
 public class ChatActivity extends AppCompatActivity{
 
-    private Conversation mConversation;
+
     private EditText inputText;
     private RecyclerView recyclerView;
     private String mReceiverID;
@@ -58,7 +58,7 @@ public class ChatActivity extends AppCompatActivity{
 
     private MessageViewModel mMessageViewModel;
     private ConversationViewModel mConversationViewModel;
-    private final RetrofitInstance retrofitInstance = new RetrofitInstance();
+
     public static MessageListAdapter adapter;
 
 
@@ -121,10 +121,12 @@ toolbarImage = findViewById(R.id.toolbarImage);
                 //sets the adapter to the recyclerview and keeps all updated
                 Log.d("OnChangedLiveData", "ChangedLiveData");
 
-
+                RetrofitInstance retrofitInstance = new RetrofitInstance();
                 adapter.setmMessages(messages);
-               recyclerView.smoothScrollToPosition(adapter.getItemCount());
                 retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
+
+               recyclerView.smoothScrollToPosition(adapter.getItemCount());
+
             }
         });
 
@@ -194,8 +196,8 @@ toolbarImage = findViewById(R.id.toolbarImage);
             Toast.makeText(this,"Network Disconnect", Toast.LENGTH_SHORT).show();
         }
 */
-     //   this.mHandler = new Handler();
-       // mRunnable.run();
+       /* this.mHandler = new Handler();
+        mRunnable.run();*/
        /* recyclerView.getAdapter().notifyDataSetChanged();
         int nrMessages = recyclerView.getAdapter().getItemCount();
         int nrMessage = recyclerView.getAdapter().getItemCount();
@@ -233,7 +235,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         final String message = inputText.getText().toString();
-        mConversation = new Conversation(message, "");
+        final Conversation  mConversation = new Conversation("er", "");
 
 
         inputText.setText("");
@@ -242,9 +244,14 @@ toolbarImage = findViewById(R.id.toolbarImage);
         int nrMessages = recyclerView.getAdapter().getItemCount()+1;
         Log.d("Heureka",String.valueOf(nrMessages));
 
-        if(recyclerView.getAdapter().getItemCount()+1 > 1 ) {
-            addMessage(new Message(message, mReceiverID, mSenderId, ""));
+
+        retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
+
+        if(recyclerView.getAdapter().getItemCount() > 0 ) {
+            Toast.makeText(getApplicationContext(),"Iemcount: "+ String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
             Message test = adapter.getMessageAtPosition(0);
+            Toast.makeText(getApplicationContext(),"Adapter: "+test.getConversationId() , Toast.LENGTH_LONG).show();
+            addMessage(new Message(message, mReceiverID, mSenderId, test.getConversationId()));
             Log.d("Heurekainside", String.valueOf(test.getConversationId()));
 
             Message mMessage = new Message(message, mReceiverID, mSenderId, String.valueOf(test.getConversationId()));
@@ -252,16 +259,21 @@ toolbarImage = findViewById(R.id.toolbarImage);
             Call<Message> callMessage = messageService.createMessage(mMessage);
             callMessage.enqueue(new Callback<Message>() {
                 @Override
-                public void onResponse(Call<Message> call, Response<Message> response) {
+                public void onResponse(Call<Message> call, Response<Message> response) {//ToDO response to list
                     if (!response.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                         return;
+
                     }
+
+                   // adapter.addMessage(response.body());
+                   Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_LONG).show();
 
                 }
 
                 @Override
                 public void onFailure(Call<Message> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -276,7 +288,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
                         Toast.makeText(getApplicationContext(), "Something went wrong during creating user, please try again.", Toast.LENGTH_LONG).show();
                         return;
                     }
-
+                    Toast.makeText(getApplicationContext(),"id: " + response.body().getId() , Toast.LENGTH_LONG).show();
                     Conversation conversation = new Conversation(message, response.body().getId(), mSenderId, mReceiverID, mEMail, message, mFirstName, mLastName);
                     mConversationViewModel.insert(conversation);
 
@@ -294,6 +306,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
 
                         @Override
                         public void onFailure(Call<Message> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -315,7 +328,7 @@ toolbarImage = findViewById(R.id.toolbarImage);
     private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            ChatActivity.this.mHandler.postDelayed(mRunnable, 4000);
+            ChatActivity.this.mHandler.postDelayed(mRunnable, 1000);
             RetrofitInstance retrofitInstance = new RetrofitInstance();
             retrofitInstance.getAllMessages(getApplicationContext(), mMessageViewModel, mConversationViewModel, mReceiverID);
         }

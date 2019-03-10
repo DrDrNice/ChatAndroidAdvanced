@@ -97,7 +97,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     public void addMessage(Message message) {
         mMessages.add(message);
-       // notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
 

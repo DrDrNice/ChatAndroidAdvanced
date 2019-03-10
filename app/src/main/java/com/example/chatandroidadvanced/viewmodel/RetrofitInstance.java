@@ -41,7 +41,7 @@ public class RetrofitInstance {
 
     public RetrofitInstance() {
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.0.16:8080/")
+                .baseUrl("http://192.168.0.220:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -225,7 +225,7 @@ public class RetrofitInstance {
 
 //----------------------Nacher
     public void getAllMessagesByReciverId(final Context context, final MessageViewModel mMessageViewModel, int reciverId, final String convId) {
-        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId);
+        Call<List<Message>> call = mMessageService.getAllMessagesbyreceiverID(reciverId,0,1000);
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -256,7 +256,7 @@ public class RetrofitInstance {
 
 
     public void getAllMessages(final Context context, final MessageViewModel mMessageViewModel, final ConversationViewModel mConversationViewModel,final String recId  ) {
-        Call<List<Message>> call = mMessageService.getAllMessages(0);
+        Call<List<Message>> call = mMessageService.getAllMessages(0,1000);
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -273,7 +273,7 @@ public class RetrofitInstance {
                     //only insert element in room from db if it is not the current user
                     //if (!preferences.getString(MainActivity.ID, "").equals(participant.getIDServer())) {
                 if( mMessageViewModel.insert(message) != -1) {
-                    if(message.getReceiverId().equals(recId) ||message.getSenderId().equals(recId) ) {
+                    if(message.getReceiverId().equals(recId) || message.getSenderId().equals(recId) ) {
                         Log.d("Retro Test", String.valueOf(mMessageViewModel.insert(message)) + "Heuraka");
                     List<Conversation> conversations = mConversationViewModel.getAllConversationsList();
                     boolean inside = false;

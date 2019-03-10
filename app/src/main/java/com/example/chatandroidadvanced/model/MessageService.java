@@ -13,10 +13,10 @@ import retrofit2.http.Query;
 
 public interface MessageService {
     @GET("/api/messages")
-    Call<List<Message>> getAllMessages(@Query("page") int page);
+    Call<List<Message>> getAllMessages(@Query("page") int page, @Query("size") int size )  ;
 
     @GET("/api/messages")
-    Call<List<Message>> getAllMessagesbyreceiverID(@Query("receiverId.equals") int postId);
+    Call<List<Message>> getAllMessagesbyreceiverID(@Query("receiverId.equals") int postId, @Query("page") int page, @Query("size") int size);
 
     @GET("/api/messages")
     Call<List<Message>> getAllMessagesbysenderID(@Query("senderId.equals") int postId);

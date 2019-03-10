@@ -1,7 +1,11 @@
 package com.example.chatandroidadvanced.view;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
@@ -23,6 +27,7 @@ import com.example.chatandroidadvanced.model.Conversation;
 import com.example.chatandroidadvanced.model.Message;
 import com.example.chatandroidadvanced.model.Participant;
 import com.example.chatandroidadvanced.model.ParticipantService;
+import com.example.chatandroidadvanced.service.NotificationJobService;
 import com.example.chatandroidadvanced.viewmodel.ConversationListAdapter;
 import com.example.chatandroidadvanced.viewmodel.ConversationViewModel;
 import com.example.chatandroidadvanced.viewmodel.MessageViewModel;
@@ -60,7 +65,11 @@ public class ConversationActivity extends AppCompatActivity {
       setSupportActionBar(toolbar);
                 // retrofitInstance = new RetrofitInstance();
 
-
+        JobScheduler scheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo job = new JobInfo.Builder(1,new ComponentName(this, NotificationJobService.class))
+                .setMinimumLatency(1000)
+                .build();
+        scheduler.schedule(job);
     /*-----------------------------
         recyclerView = findViewById(R.id.rcvConversations);
         conversationListAdapter = new ConversationListAdapter(this, conversationList);
