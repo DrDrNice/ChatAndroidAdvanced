@@ -1,6 +1,7 @@
 package com.example.chatandroidadvanced.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
@@ -34,15 +35,9 @@ public class MainActivityUITest {
     public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     private MainActivity mMainActivity;
-    private SharedPreferences preferences;
-    private Context mContext;
 
     @Before
     public void setUp() throws Exception {
-        mContext = InstrumentationRegistry.getTargetContext();
-        preferences = mContext.getSharedPreferences(MY_PREFERENCES, MODE_PRIVATE);
-        preferences.edit().clear().apply();
-
         mMainActivity = activityTestRule.getActivity();
         Intents.init();
     }
@@ -51,6 +46,8 @@ public class MainActivityUITest {
     private String mLastName = "Bratt";
     private String mEmail = "TonyBratt@gmx.at";
 
+    //this test only works if no user is logged in.
+    //if user is logged in delete the app to run test successfull or delete shared preferences
     @Test
     public void testUserInputCanceled(){
         //delete contained text in all fields

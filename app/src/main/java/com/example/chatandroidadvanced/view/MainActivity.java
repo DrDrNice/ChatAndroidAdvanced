@@ -91,19 +91,6 @@ public class MainActivity extends AppCompatActivity {
     public void createUserClicked(View view) {
         Participant participant = getUserInput();
         if(participant != null) {
-            //todo works in externally class but to much on main thread
-            //create new participant on server
-            //RetrofitInstance retrofitInstance = new RetrofitInstance();
-            //retrofitInstance.createParticipant(participant, getApplicationContext(), true);
-
-            //if shared there exists a shared preferences file user is allredy logged in and conversationactivity starts
-            /*if(!preferences.getString(FIRSTNAME, "").equals("") && !preferences.getString(LASTNAME, "").equals("") && !preferences.getString(EMAIL, "").equals("")){
-                //start conversation activity
-                Intent intentConversations = new Intent(getApplicationContext(), ConversationActivity.class);
-                startActivity(intentConversations);
-                finish();
-            }*/
-
             RetrofitInstance retrofitInstance = new RetrofitInstance();
             ParticipantService participantService = retrofitInstance.getParticipantService();
             Call<Participant> call = participantService.createParticipant(participant);
